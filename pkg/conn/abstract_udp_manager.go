@@ -33,14 +33,14 @@ type Message struct {
 	Address net.UDPAddr
 }
 
-func NewUDPManager(config *UDPManagerConfig) *AbstractUDPManager {
+func NewUDPManager(config UDPManagerConfig) *AbstractUDPManager {
 	err := assertConfigValid(config)
 	if (err != nil) {
 		log.Fatal(err)
 	}
 	
 	manager := &AbstractUDPManager{
-		config: config,
+		config: &config,
 		sendingChan: make(chan Message, SENDING_CHAN_CAP),
 		doneChan: make(chan bool),
 	}
@@ -125,7 +125,7 @@ func (manager *AbstractUDPManager) sendUDP() {
 	}
 }
 
-func (manager *AbstractUDPManager) SendString(msg Message) {
+func (manager *AbstractUDPManager) SendMessage(msg Message) {
 	manager.sendingChan <- msg
 }
 
