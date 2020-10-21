@@ -6,11 +6,12 @@ import (
 	"log"
 	"fmt"
 	"errors"
+	"os/signal"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
 )
 
 const (
-	MIN_NUMBER_ARGS = 3
+	MIN_NUMBER_ARGS = 2
 )
 
 var (
@@ -19,11 +20,18 @@ var (
 )
 
 func main() {
-	receivingChan := make(chan conn.Message)
+	receivingChan := make(chan conn.Message, 2)
 	manager := createUDPManager(receivingChan)
 
 	go printIncomingMessages(receivingChan)
 	go sendUserInput(manager)
+
+	interrupt := make(chan os.Signal)
+	signal.Notify(interrupt, os.Interrupt)
+	
+	<-interrupt
+	manager.Close()
+	close(doneChan)
 }
 
 func createUDPManager(receivingChan chan conn.Message) *conn.AbstractUDPManager {
@@ -46,7 +54,7 @@ func printIncomingMessages(receivingChan chan conn.Message) {
 			case <- doneChan:
 				return
 			case msg := <- receivingChan:
-				fmt.Println(msg.Data)
+				fmt.Println(string(msg.Data))
 		}
 	}
 }
