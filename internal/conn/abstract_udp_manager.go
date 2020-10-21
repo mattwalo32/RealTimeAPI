@@ -8,9 +8,8 @@ import (
 
 const (
 	MIN_RECEIVING_CHAN_CAP = 2
-	SENDING_CHAN_CAP = 2
+	SENDING_CHAN_CAP = 10
 	BUFFER_SIZE = 1024
-
 )
 
 type AbstractUDPManager struct {
@@ -101,11 +100,6 @@ func (manager *AbstractUDPManager) listenUDP() {
 
 		manager.config.ReceivingChan <- msg
 	}
-	// TODO: Put messages into queue if sendingChan is full
-}
-
-func queueMessageForProcessing() {
-	// TODO:
 }
 
 func (manager *AbstractUDPManager) sendUDP() {
