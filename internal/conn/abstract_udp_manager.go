@@ -34,7 +34,7 @@ type Message struct {
 }
 
 func NewUDPManager(config UDPManagerConfig) *AbstractUDPManager {
-	err := assertConfigValid(config)
+	err := assertConfigValid(&config)
 	if (err != nil) {
 		log.Fatal(err)
 	}
