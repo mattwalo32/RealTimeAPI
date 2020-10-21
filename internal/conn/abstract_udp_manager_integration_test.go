@@ -1,21 +1,19 @@
 package conn_test
 
 import (
-	"net"
 	"bytes"
-	"testing"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
+	"net"
+	"testing"
 )
 
-var (
-	
-)
+var ()
 
 func createUDPManager(address string) (chan conn.Message, *conn.AbstractUDPManager) {
 	receivingChan := make(chan conn.Message, 2)
-	config := conn.UDPManagerConfig {
+	config := conn.UDPManagerConfig{
 		ReceivingChan: receivingChan,
-		Address: address,
+		Address:       address,
 	}
 
 	return receivingChan, conn.NewUDPManager(config)
@@ -28,8 +26,8 @@ func TestSendMessages(t *testing.T) {
 	_, managerA := createUDPManager(clientAAddress)
 	clientBReceivingChan, _ := createUDPManager(clientBAddress)
 
-	clientAUDPAddr,_ := net.ResolveUDPAddr("udp4", clientAAddress)
-	clientBUDPAddr,_ := net.ResolveUDPAddr("udp4", clientBAddress)
+	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
+	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
 
 	message_tests := [][]byte{
 		[]byte(""),
@@ -38,9 +36,9 @@ func TestSendMessages(t *testing.T) {
 		[]byte("!@#$%&*()39283   add\t\tflkj \n !!/?"),
 	}
 
-	for _,testData := range message_tests {
+	for _, testData := range message_tests {
 		msg := conn.Message{
-			Data: testData,
+			Data:    testData,
 			Address: *clientBUDPAddr,
 		}
 

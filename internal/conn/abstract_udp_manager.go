@@ -2,14 +2,14 @@ package conn
 
 import (
 	"fmt"
-	"net"
 	"log"
+	"net"
 )
 
 const (
 	MIN_RECEIVING_CHAN_CAP = 2
-	SENDING_CHAN_CAP = 10
-	BUFFER_SIZE = 1024
+	SENDING_CHAN_CAP       = 10
+	BUFFER_SIZE            = 1024
 )
 
 type AbstractUDPManager struct {
@@ -17,7 +17,7 @@ type AbstractUDPManager struct {
 	conn   *net.UDPConn
 
 	sendingChan chan Message
-	doneChan chan bool
+	doneChan    chan bool
 }
 
 type UDPManagerConfig struct {
@@ -28,20 +28,20 @@ type UDPManagerConfig struct {
 }
 
 type Message struct {
-	Data []byte
+	Data    []byte
 	Address net.UDPAddr
 }
 
 func NewUDPManager(config UDPManagerConfig) *AbstractUDPManager {
 	err := assertConfigValid(&config)
-	if (err != nil) {
+	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	manager := &AbstractUDPManager{
-		config: &config,
+		config:      &config,
 		sendingChan: make(chan Message, SENDING_CHAN_CAP),
-		doneChan: make(chan bool),
+		doneChan:    make(chan bool),
 	}
 
 	manager.init()
@@ -51,7 +51,7 @@ func NewUDPManager(config UDPManagerConfig) *AbstractUDPManager {
 
 func assertConfigValid(config *UDPManagerConfig) error {
 	cap := cap(config.ReceivingChan)
-	if (cap < MIN_RECEIVING_CHAN_CAP) {
+	if cap < MIN_RECEIVING_CHAN_CAP {
 		return fmt.Errorf("Recieving channel must have capacity %v, got: %v", MIN_RECEIVING_CHAN_CAP, cap)
 	}
 
@@ -82,9 +82,9 @@ func (manager *AbstractUDPManager) listenUDP() {
 
 	for {
 		select {
-			case <-manager.doneChan:
-				return
-			default:
+		case <-manager.doneChan:
+			return
+		default:
 		}
 
 		n, addr, err := manager.conn.ReadFromUDP(buffer)
@@ -93,8 +93,8 @@ func (manager *AbstractUDPManager) listenUDP() {
 			return
 		}
 
-		msg :=  Message {
-			Data: buffer[0:n], 
+		msg := Message{
+			Data:    buffer[0:n],
 			Address: *addr,
 		}
 
@@ -107,12 +107,12 @@ func (manager *AbstractUDPManager) sendUDP() {
 
 	for {
 		select {
-			case <-manager.doneChan:
-				return
-			case msg = <-manager.sendingChan:
+		case <-manager.doneChan:
+			return
+		case msg = <-manager.sendingChan:
 		}
 
-		_,err := manager.conn.WriteToUDP(msg.Data, &msg.Address)
+		_, err := manager.conn.WriteToUDP(msg.Data, &msg.Address)
 		if err != nil {
 			log.Printf("WARNING: Error while writing to UDP: %v", err)
 		}
