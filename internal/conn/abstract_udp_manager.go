@@ -24,6 +24,7 @@ type UDPManagerConfig struct {
 	// The manager writes incoming messages to this channel. Acts as callback mechanism.
 	ReceivingChan chan Message
 
+	// Address to listen on
 	Address string
 }
 
