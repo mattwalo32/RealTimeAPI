@@ -124,7 +124,7 @@ func (manager *UDPManager) SendMessage(msg Message) {
 	manager.sendingChan <- msg
 }
 
-func (manager *UDPManager) Close() {
+func (manager *UDPManager) Stop() {
 	close(manager.doneChan)
 	manager.conn.Close()
 }

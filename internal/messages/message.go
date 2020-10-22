@@ -1,9 +1,9 @@
 package messages
 
 import (
-	"net"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"net"
 )
 
 const (
@@ -30,7 +30,7 @@ type Encodable interface {
 
 type encodedMessage struct {
 	MessageType int
-	Data []byte 
+	Data        []byte
 }
 
 func encodeWithHeader(encodable Encodable) ([]byte, error) {
@@ -41,9 +41,9 @@ func encodeWithHeader(encodable Encodable) ([]byte, error) {
 
 	message := encodedMessage{
 		MessageType: encodable.GetMessageType(),
-		Data: data,
+		Data:        data,
 	}
-	
+
 	return json.Marshal(message)
 }
 
@@ -51,12 +51,12 @@ func DecodeFromHeader(data []byte) (Encodable, error) {
 	var header encodedMessage
 	err := json.Unmarshal(data, &header)
 
-	switch(header.MessageType){
-		case MESSAGE_FIND_ROOM:
-			var message *FindRoomMessage
-			message.Decode(header.Data)
-			return message, err
-		default:
-			return nil, fmt.Errorf("Cannot decode unrecognized message type: %v", header.MessageType)
+	switch header.MessageType {
+	case MESSAGE_FIND_ROOM:
+		var message *FindRoomMessage
+		message.Decode(header.Data)
+		return message, err
+	default:
+		return nil, fmt.Errorf("Cannot decode unrecognized message type: %v", header.MessageType)
 	}
 }

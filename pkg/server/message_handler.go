@@ -2,19 +2,19 @@ package server
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
 	UDP_RECEIVING_CHAN_SIZE = 5
-	MIN_RECEIVING_CHAN_CAP = 2
+	MIN_RECEIVING_CHAN_CAP  = 2
 )
 
 type MessageHandler struct {
-	config *MessageHandlerConfig
-	udpManager *conn.UDPManager
+	config           *MessageHandlerConfig
+	udpManager       *conn.UDPManager
 	udpReceivingChan chan conn.Message
 	doneChan         chan bool
 }
@@ -34,16 +34,16 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 		log.Fatal(err)
 	}
 
-	udpConfig := conn.UDPManagerConfig {
+	udpConfig := conn.UDPManagerConfig{
 		ReceivingChan: udpReceivingChan,
-		Address: config.Address,
+		Address:       config.Address,
 	}
 
 	handler := &MessageHandler{
-		udpManager: conn.NewUDPManager(udpConfig),
+		udpManager:       conn.NewUDPManager(udpConfig),
 		udpReceivingChan: udpReceivingChan,
-		doneChan: make(chan bool),
-		config: &config,
+		doneChan:         make(chan bool),
+		config:           &config,
 	}
 
 	go handler.decodeMessages()
@@ -61,12 +61,12 @@ func assertConfigValid(config *MessageHandlerConfig) error {
 
 func (handler *MessageHandler) decodeMessages() {
 	var udpMsg conn.Message
-	
+
 	for {
 		select {
-			case <- handler.doneChan:
-				return
-			case udpMsg = <- handler.udpReceivingChan:
+		case <-handler.doneChan:
+			return
+		case udpMsg = <-handler.udpReceivingChan:
 		}
 
 		message, err := messages.DecodeFromHeader(udpMsg.Data)
@@ -90,8 +90,8 @@ func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
 		return
 	}
 
-	udpMsg := conn.Message {
-		Data: data,
+	udpMsg := conn.Message{
+		Data:    data,
 		Address: *msg.GetDestination(),
 	}
 

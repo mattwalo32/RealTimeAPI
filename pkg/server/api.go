@@ -20,8 +20,8 @@ type RealTimeServerConfig struct {
 }
 
 func NewServer(config RealTimeServerConfig) *RealTimeServer {
-	server := &RealTimeServer {
-		config: &config,
+	server := &RealTimeServer{
+		config:   &config,
 		doneChan: make(chan bool),
 	}
 

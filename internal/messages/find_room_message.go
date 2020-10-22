@@ -1,20 +1,20 @@
 package messages
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
-	"encoding/json"
 	"net"
 )
 
 type FindRoomMessage struct {
 	SourceAddr *net.UDPAddr
-	DestAddr *net.UDPAddr
+	DestAddr   *net.UDPAddr
 
-	UserID uuid.UUID
+	UserID              uuid.UUID
 	ShouldStartWhenFull bool
-	MinPlayers int
-	MaxPlayers int
+	MinPlayers          int
+	MaxPlayers          int
 }
 
 func (msg *FindRoomMessage) GetSource() *net.UDPAddr {
