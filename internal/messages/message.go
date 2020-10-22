@@ -1,6 +1,7 @@
 package messages
 
 import (
+	"net"
 	"fmt"
 	"encoding/json"
 )
@@ -18,9 +19,13 @@ const (
 )
 
 type Encodable interface {
-	GetMessageType() int
 	Encode() ([]byte, error)
 	Decode([]byte)
+	GetSource() *net.UDPAddr
+	SetSource(*net.UDPAddr)
+	GetDestination() *net.UDPAddr
+	SetDestination(*net.UDPAddr)
+	GetMessageType() int
 }
 
 type encodedMessage struct {
@@ -42,7 +47,7 @@ func encodeWithHeader(encodable Encodable) ([]byte, error) {
 	return json.Marshal(message)
 }
 
-func decodeFromHeader(data []byte) (Encodable, error) {
+func DecodeFromHeader(data []byte) (Encodable, error) {
 	var header encodedMessage
 	err := json.Unmarshal(data, &header)
 
