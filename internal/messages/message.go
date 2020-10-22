@@ -21,10 +21,10 @@ const (
 type Encodable interface {
 	Encode() ([]byte, error)
 	Decode([]byte)
-	GetSource() *net.UDPAddr
-	SetSource(*net.UDPAddr)
-	GetDestination() *net.UDPAddr
-	SetDestination(*net.UDPAddr)
+	GetSource() net.UDPAddr
+	SetSource(net.UDPAddr)
+	GetDestination() net.UDPAddr
+	SetDestination(net.UDPAddr)
 	GetMessageType() int
 }
 

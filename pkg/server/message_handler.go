@@ -76,7 +76,7 @@ func (handler *MessageHandler) decodeMessages() {
 			continue
 		}
 
-		message.SetSource(&udpMsg.Address)
+		message.SetSource(udpMsg.Address)
 		handler.config.MessageReceivingChan <- message
 
 		// TODO: Don't send back acknowledgment messages
@@ -92,7 +92,7 @@ func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
 
 	udpMsg := conn.Message{
 		Data:    data,
-		Address: *msg.GetDestination(),
+		Address: msg.GetDestination(),
 	}
 
 	handler.udpManager.SendMessage(udpMsg)
