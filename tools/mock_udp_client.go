@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os"
-	"net"
-	"log"
-	"fmt"
 	"errors"
-	"os/signal"
+	"fmt"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
+	"log"
+	"net"
+	"os"
+	"os/signal"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	doneChan = make(chan bool)
+	doneChan         = make(chan bool)
 	errorMissingArgs = errors.New("Please provide the following args in order: <listen address> <write address>")
 )
 
@@ -28,21 +28,21 @@ func main() {
 
 	interrupt := make(chan os.Signal)
 	signal.Notify(interrupt, os.Interrupt)
-	
+
 	<-interrupt
 	manager.Close()
 	close(doneChan)
 }
 
-func createUDPManager(receivingChan chan conn.Message) *conn.AbstractUDPManager {
-	if len(os.Args) < MIN_NUMBER_ARGS + 1 {
+func createUDPManager(receivingChan chan conn.Message) *conn.UDPManager {
+	if len(os.Args) < MIN_NUMBER_ARGS+1 {
 		log.Fatal(errorMissingArgs)
 	}
 
 	address := os.Args[1]
-	config := conn.UDPManagerConfig {
+	config := conn.UDPManagerConfig{
 		ReceivingChan: receivingChan,
-		Address: address,
+		Address:       address,
 	}
 
 	return conn.NewUDPManager(config)
@@ -51,15 +51,15 @@ func createUDPManager(receivingChan chan conn.Message) *conn.AbstractUDPManager 
 func printIncomingMessages(receivingChan chan conn.Message) {
 	for {
 		select {
-			case <- doneChan:
-				return
-			case msg := <- receivingChan:
-				fmt.Println(string(msg.Data))
+		case <-doneChan:
+			return
+		case msg := <-receivingChan:
+			fmt.Println(string(msg.Data))
 		}
 	}
 }
 
-func sendUserInput(manager *conn.AbstractUDPManager) {
+func sendUserInput(manager *conn.UDPManager) {
 	writeAddress := resolveUDPAddr(os.Args[2])
 	var input string
 
@@ -67,7 +67,7 @@ func sendUserInput(manager *conn.AbstractUDPManager) {
 		fmt.Scanln(&input)
 
 		msg := conn.Message{
-			Data: []byte(input),
+			Data:    []byte(input),
 			Address: writeAddress,
 		}
 

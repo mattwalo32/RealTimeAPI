@@ -12,7 +12,7 @@ const (
 	BUFFER_SIZE            = 1024
 )
 
-type AbstractUDPManager struct {
+type UDPManager struct {
 	config *UDPManagerConfig
 	conn   *net.UDPConn
 
@@ -33,13 +33,13 @@ type Message struct {
 	Address net.UDPAddr
 }
 
-func NewUDPManager(config UDPManagerConfig) *AbstractUDPManager {
+func NewUDPManager(config UDPManagerConfig) *UDPManager {
 	err := assertConfigValid(&config)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	manager := &AbstractUDPManager{
+	manager := &UDPManager{
 		config:      &config,
 		sendingChan: make(chan Message, SENDING_CHAN_CAP),
 		doneChan:    make(chan bool),
@@ -59,13 +59,13 @@ func assertConfigValid(config *UDPManagerConfig) error {
 	return nil
 }
 
-func (manager *AbstractUDPManager) init() {
+func (manager *UDPManager) init() {
 	manager.initConn()
 	go manager.listenUDP()
 	go manager.sendUDP()
 }
 
-func (manager *AbstractUDPManager) initConn() {
+func (manager *UDPManager) initConn() {
 	address := manager.config.Address
 	addr, err := net.ResolveUDPAddr("udp4", address)
 	if err != nil {
@@ -78,7 +78,7 @@ func (manager *AbstractUDPManager) initConn() {
 	}
 }
 
-func (manager *AbstractUDPManager) listenUDP() {
+func (manager *UDPManager) listenUDP() {
 	buffer := make([]byte, BUFFER_SIZE)
 
 	for {
@@ -103,7 +103,7 @@ func (manager *AbstractUDPManager) listenUDP() {
 	}
 }
 
-func (manager *AbstractUDPManager) sendUDP() {
+func (manager *UDPManager) sendUDP() {
 	msg := Message{}
 
 	for {
@@ -120,11 +120,11 @@ func (manager *AbstractUDPManager) sendUDP() {
 	}
 }
 
-func (manager *AbstractUDPManager) SendMessage(msg Message) {
+func (manager *UDPManager) SendMessage(msg Message) {
 	manager.sendingChan <- msg
 }
 
-func (manager *AbstractUDPManager) Close() {
+func (manager *UDPManager) Close() {
 	close(manager.doneChan)
 	manager.conn.Close()
 }

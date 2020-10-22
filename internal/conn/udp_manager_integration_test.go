@@ -9,7 +9,7 @@ import (
 
 var ()
 
-func createUDPManager(address string) (chan conn.Message, *conn.AbstractUDPManager) {
+func createUDPManager(address string) (chan conn.Message, *conn.UDPManager) {
 	receivingChan := make(chan conn.Message, 2)
 	config := conn.UDPManagerConfig{
 		ReceivingChan: receivingChan,
