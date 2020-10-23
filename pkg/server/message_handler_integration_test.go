@@ -47,6 +47,10 @@ func TestSendMessages(t *testing.T) {
 			t.Errorf("Expected packet number of %v, got: %v", packetNum, response.GetPacketCount())
 		}
 
+		if response.IsResponseRequired() {
+			t.Errorf("Expected response not required")
+		}
+
 		source := response.GetSource()
 		if source.String() != clientAUDPAddr.String() {
 			t.Errorf("Expected message to be from %v, got: %v", clientAUDPAddr, response.GetSource())
