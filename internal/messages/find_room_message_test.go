@@ -31,6 +31,18 @@ func TestFindRoom_EncodeDecode(t *testing.T) {
 		t.Error("Destination addresses do not match")
 	}
 
+	if msg.MessageID != decodedMsg.MessageID {
+		t.Error("MessageIDs do not match")
+	}
+
+	if msg.PacketCount != decodedMsg.PacketCount {
+		t.Error("PacketCounts do not match")
+	}
+	
+	if msg.ResponseRequired != decodedMsg.ResponseRequired {
+		t.Error("ResponseRequireds do not match")
+	}
+
 	if msg.UserID != decodedMsg.UserID {
 		t.Error("UserIDs do not match")
 	}
