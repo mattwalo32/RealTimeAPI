@@ -1,14 +1,14 @@
 package server
 
 import (
-	"testing"
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
+	"testing"
 )
 
 func TestAssertConfigValid_TooShort(t *testing.T) {
 	config := &MessageHandlerConfig{
 		MessageReceivingChan: make(chan messages.Encodable, MIN_RECEIVING_CHAN_CAP-1),
-		Address:       "",
+		Address:              "",
 	}
 
 	err := assertConfigValid(config)
@@ -20,7 +20,7 @@ func TestAssertConfigValid_TooShort(t *testing.T) {
 func TestAssertConfigValid_Valid(t *testing.T) {
 	config := &MessageHandlerConfig{
 		MessageReceivingChan: make(chan messages.Encodable, MIN_RECEIVING_CHAN_CAP),
-		Address:       "",
+		Address:              "",
 	}
 
 	err := assertConfigValid(config)

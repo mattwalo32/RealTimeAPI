@@ -12,7 +12,7 @@ func createMessageHandler(address string) (chan messages.Encodable, *server.Mess
 	receivingChan := make(chan messages.Encodable, 2)
 	config := server.MessageHandlerConfig{
 		MessageReceivingChan: receivingChan,
-		Address:       address,
+		Address:              address,
 	}
 
 	return receivingChan, server.NewMessageHandler(config)
@@ -49,8 +49,8 @@ func TestSendMessages(t *testing.T) {
 			t.Errorf("Expected message to be from %v, got: %v", clientAUDPAddr, response.GetSource())
 		}
 
-		expectedBytes,_ := msg.Encode()
-		actualBytes,_ := response.Encode()
+		expectedBytes, _ := msg.Encode()
+		actualBytes, _ := response.Encode()
 		if !bytes.Equal(expectedBytes, actualBytes) {
 			t.Errorf("The content of the sent and received messages differ")
 		}

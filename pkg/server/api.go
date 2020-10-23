@@ -1,8 +1,6 @@
 package server
 
-import (
-	
-)
+import ()
 
 type RealTimeServer struct {
 	// Configuration passed into server
