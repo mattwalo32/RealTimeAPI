@@ -26,6 +26,12 @@ type MessageHandlerConfig struct {
 
 	// Passed to UDPManager
 	Address string
+
+	// Max amount of times to retry sending a reliable message
+	MaxMessageRetries int
+
+	// Time between reliable message retries
+	MessageRetryTimeoutMs uint64
 }
 
 func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {

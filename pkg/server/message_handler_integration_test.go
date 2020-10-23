@@ -12,6 +12,8 @@ func createMessageHandler(address string) (chan messages.Encodable, *server.Mess
 	receivingChan := make(chan messages.Encodable, 2)
 	config := server.MessageHandlerConfig{
 		MessageReceivingChan: receivingChan,
+		MaxMessageRetries: 2,
+		MessageRetryTimeoutMs: uint64(1000),
 		Address:              address,
 	}
 
