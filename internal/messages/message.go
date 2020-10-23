@@ -1,6 +1,7 @@
 package messages
 
 import (
+	"github.com/google/uuid"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -25,6 +26,11 @@ type Encodable interface {
 	SetSource(net.UDPAddr)
 	GetDestination() net.UDPAddr
 	SetDestination(net.UDPAddr)
+	SetPacketCount(int)
+	GetPacketCount() int
+	IsResponseRequired() bool
+	SetResponseRequired(bool)
+	GetID() uuid.UUID
 	GetMessageType() int
 }
 
