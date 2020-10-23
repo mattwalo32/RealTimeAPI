@@ -10,6 +10,9 @@ func RandRoomMessage() *FindRoomMessage {
 	return &FindRoomMessage{
 		SourceAddr: util.RandUDPAddr(),
 		DestAddr: util.RandUDPAddr(),
+		MessageID: uuid.New(),
+		PacketCount: rand.Int(),
+		ResponseRequired: util.RandBool(),
 	
 		UserID: uuid.New(),
 		ShouldStartWhenFull: util.RandBool(),
