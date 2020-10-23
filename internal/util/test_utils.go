@@ -19,7 +19,7 @@ func RandUDPAddr() net.UDPAddr {
 func RandString(len int) string {
 	bytes := make([]byte, len)
 	for i := 0; i < len; i++ {
-		bytes[i] = byte(65 + rand.Intn(30))
+		bytes[i] = byte(32 + rand.Intn(94))
 	}
 	
 	return string(bytes)
