@@ -33,7 +33,7 @@ type encodedMessage struct {
 	Data        []byte
 }
 
-func encodeWithHeader(encodable Encodable) ([]byte, error) {
+func EncodeWithHeader(encodable Encodable) ([]byte, error) {
 	data, err := encodable.Encode()
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func DecodeFromHeader(data []byte) (Encodable, error) {
 
 	switch header.MessageType {
 	case MESSAGE_FIND_ROOM:
-		var message *FindRoomMessage
+		message := &FindRoomMessage{}
 		message.Decode(header.Data)
 		return message, err
 	default:
