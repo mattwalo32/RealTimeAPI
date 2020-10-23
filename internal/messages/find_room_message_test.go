@@ -1,13 +1,8 @@
 package messages
 
 import (
-	"github.com/google/uuid"
-	"net"
 	"testing"
 )
-
-var testAddressA = net.UDPAddr{[]byte{127, 0, 0, 1}, 50, ""}
-var testAddressB = net.UDPAddr{[]byte{255, 1, 2, 28}, 0, "zone"}
 
 func TestFindRoom_Type(t *testing.T) {
 	msg := FindRoomMessage{}
@@ -18,14 +13,7 @@ func TestFindRoom_Type(t *testing.T) {
 }
 
 func TestFindRoom_EncodeDecode(t *testing.T) {
-	msg := FindRoomMessage{
-		SourceAddr:          testAddressA,
-		DestAddr:            testAddressB,
-		UserID:              uuid.New(),
-		ShouldStartWhenFull: true,
-		MinPlayers:          1,
-		MaxPlayers:          2,
-	}
+	msg := RandRoomMessage()
 
 	data, err := msg.Encode()
 	if err != nil {
