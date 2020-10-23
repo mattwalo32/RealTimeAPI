@@ -84,7 +84,7 @@ func (handler *MessageHandler) decodeMessages() {
 }
 
 func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
-	data, err := msg.Encode()
+	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)
 		return

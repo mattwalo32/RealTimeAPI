@@ -6,8 +6,8 @@ import (
 	"github.com/mattwalo32/RealTimeAPI/internal/util"
 )
 
-func RandRoomMessage() FindRoomMessage {
-	return FindRoomMessage{
+func RandRoomMessage() *FindRoomMessage {
+	return &FindRoomMessage{
 		SourceAddr: util.RandUDPAddr(),
 		DestAddr: util.RandUDPAddr(),
 	
@@ -16,4 +16,9 @@ func RandRoomMessage() FindRoomMessage {
 		MinPlayers:          rand.Int(),
 		MaxPlayers:          rand.Int(),
 	} 
+}
+
+func RandEncodable() Encodable {
+	// TODO: Do with all message types later
+	return RandRoomMessage()
 }
