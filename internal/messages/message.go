@@ -26,8 +26,8 @@ type Encodable interface {
 	SetSource(net.UDPAddr)
 	GetDestination() net.UDPAddr
 	SetDestination(net.UDPAddr)
-	SetPacketCount(int)
-	GetPacketCount() int
+	SetPacketNumber(int)
+	GetPacketNumber() int
 	IsResponseRequired() bool
 	SetResponseRequired(bool)
 	GetID() uuid.UUID

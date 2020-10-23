@@ -43,8 +43,8 @@ func TestSendMessages(t *testing.T) {
 			t.Fatalf("Expected message type %v, got: %v", msg.GetMessageType(), response.GetMessageType())
 		}
 
-		if response.GetPacketCount() != packetNum {
-			t.Errorf("Expected packet number of %v, got: %v", packetNum, response.GetPacketCount())
+		if response.GetPacketNumber() != packetNum {
+			t.Errorf("Expected packet number of %v, got: %v", packetNum, response.GetPacketNumber())
 		}
 
 		if response.IsResponseRequired() {

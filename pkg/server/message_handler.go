@@ -87,7 +87,7 @@ func (handler *MessageHandler) decodeMessages() {
 
 func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
 	msg.SetResponseRequired(false)
-	msg.SetPacketCount(handler.packetCount)
+	msg.SetPacketNumber(handler.packetCount)
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)

@@ -11,7 +11,7 @@ type FindRoomMessage struct {
 	SourceAddr net.UDPAddr
 	DestAddr   net.UDPAddr
 	MessageID  uuid.UUID
-	PacketCount int
+	PacketNumber int
 	ResponseRequired bool
 
 	UserID              uuid.UUID
@@ -41,12 +41,12 @@ func (msg *FindRoomMessage) IsResponseRequired() bool {
 	return msg.ResponseRequired
 }
 
-func (msg *FindRoomMessage) SetPacketCount(count int) {
-	msg.PacketCount = count
+func (msg *FindRoomMessage) SetPacketNumber(count int) {
+	msg.PacketNumber = count
 }
 
-func (msg *FindRoomMessage) GetPacketCount() int {
-	return msg.PacketCount
+func (msg *FindRoomMessage) GetPacketNumber() int {
+	return msg.PacketNumber
 }
 
 func (msg *FindRoomMessage) GetID() uuid.UUID {
