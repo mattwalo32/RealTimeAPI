@@ -22,7 +22,6 @@ func TestSendMessages(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 20
-
 	_, handlerA := createMessageHandler(clientAAddress)
 	clientBReceivingChan, _ := createMessageHandler(clientBAddress)
 
@@ -36,12 +35,16 @@ func TestSendMessages(t *testing.T) {
 		test_messages[i].SetDestination(*clientBUDPAddr)
 	}
 
-	for _, msg := range test_messages {
+	for packetNum, msg := range test_messages {
 		handlerA.SendMessage(msg)
 		response := <-clientBReceivingChan
 
 		if response.GetMessageType() != msg.GetMessageType() {
 			t.Fatalf("Expected message type %v, got: %v", msg.GetMessageType(), response.GetMessageType())
+		}
+
+		if response.GetPacketCount() != packetNum {
+			t.Errorf("Expected packet number of %v, got: %v", packetNum, response.GetPacketCount())
 		}
 
 		source := response.GetSource()

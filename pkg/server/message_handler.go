@@ -13,6 +13,7 @@ const (
 )
 
 type MessageHandler struct {
+	packetCount      int
 	config           *MessageHandlerConfig
 	udpManager       *conn.UDPManager
 	udpReceivingChan chan conn.Message
@@ -44,6 +45,7 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 		udpReceivingChan: udpReceivingChan,
 		doneChan:         make(chan bool),
 		config:           &config,
+		packetCount: 0,
 	}
 
 	go handler.decodeMessages()
@@ -84,6 +86,8 @@ func (handler *MessageHandler) decodeMessages() {
 }
 
 func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
+	msg.SetResponseRequired(false)
+	msg.SetPacketCount(handler.packetCount)
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)
@@ -96,10 +100,12 @@ func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
 	}
 
 	handler.udpManager.SendMessage(udpMsg)
+	handler.packetCount++
 }
 
-func (handler *MessageHandler) SendMessageReliably(msg *messages.Encodable) {
-	// TODO: Handle responses and timing
+func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
+	msg.SetResponseRequired(true)
+	// TODO:
 }
 
 func (handler *MessageHandler) Stop() {
