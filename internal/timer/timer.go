@@ -1,8 +1,8 @@
 package timer
 
 import (
-	"sync"
 	"github.com/google/uuid"
+	"sync"
 	"time"
 )
 
@@ -11,12 +11,12 @@ type TimerCallback func(interface{})
 type Timer struct {
 	doneChan chan bool
 	eventMap map[uuid.UUID]*TimerEvent
-	lock sync.Mutex
+	lock     sync.Mutex
 }
 
 type TimerEvent struct {
 	callback TimerCallback
-	capture interface{}
+	capture  interface{}
 }
 
 func NewTimer() *Timer {
@@ -29,13 +29,13 @@ func NewTimer() *Timer {
 }
 
 func (timer *Timer) startTimerForEvent(eventID uuid.UUID, numRepeats int, timeoutMs int) {
-	for i:= 0; i < numRepeats; i++ {
+	for i := 0; i < numRepeats; i++ {
 		select {
 		case <-timer.doneChan:
 			return
 		case <-time.After(time.Duration(timeoutMs) * time.Millisecond):
 			timer.lock.Lock()
-			event,eventExists := timer.eventMap[eventID]
+			event, eventExists := timer.eventMap[eventID]
 			if !eventExists {
 				timer.lock.Unlock()
 				return
@@ -55,7 +55,7 @@ func (timer *Timer) AddRepeatingEvent(callback TimerCallback, capture interface{
 	id := uuid.New()
 	event := &TimerEvent{
 		callback: callback,
-		capture: capture,
+		capture:  capture,
 	}
 
 	timer.lock.Lock()
@@ -75,5 +75,3 @@ func (timer *Timer) RemoveEvent(eventID uuid.UUID) {
 func (timer *Timer) Stop() {
 	close(timer.doneChan)
 }
-
-
