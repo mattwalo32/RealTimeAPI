@@ -37,4 +37,31 @@ func TestSingleEvent(t *testing.T) {
 			t.Fatalf("Timer fired too late")
 		}
 	}
+
+	if len(timer.eventMap) != 0 {
+		t.Errorf("Old events were not deleted")
+	}
+}
+
+func TestRepeatingEvent(t *testing.T) {
+	timer := NewTimer()
+	timeout := 500
+	repetitions := []int{2, 5}
+	
+	for _, numReps := range repetitions {
+		val := 0
+		count := count{&val}
+		timer.AddRepeatingEvent(addToCount, count, timeout, numReps)
+		<-time.After(time.Duration(float32(timeout) * TOLERANCE) * time.Millisecond)
+
+		for rep := 1; rep <= numReps; rep++ {
+			<-time.After(time.Duration(timeout) * time.Millisecond)
+			if val != rep {
+				t.Fatalf("Timer did not fire in time. Expected %v, got %v", rep, val)
+			}
+		}
+	}
+	if len(timer.eventMap) != 0 {
+		t.Errorf("Old events were not deleted")
+	}
 }
