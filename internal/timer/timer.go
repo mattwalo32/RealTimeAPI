@@ -35,16 +35,20 @@ func (timer *Timer) startTimerForEvent(eventID uuid.UUID, numRepeats int, timeou
 			return
 		case <-time.After(time.Duration(timeoutMs) * time.Millisecond):
 			timer.lock.Lock()
-			defer timer.lock.Unlock()
-			
 			event,eventExists := timer.eventMap[eventID]
 			if !eventExists {
+				timer.lock.Unlock()
 				return
 			}
 
 			event.callback(event.capture)
+			timer.lock.Unlock()
 		}
 	}
+
+	timer.lock.Lock()
+	delete(timer.eventMap, eventID)
+	timer.lock.Unlock()
 }
 
 func (timer *Timer) AddRepeatingEvent(callback TimerCallback, capture interface{}, timeoutMs int, numberRepeats int) uuid.UUID {
