@@ -65,3 +65,20 @@ func TestRepeatingEvent(t *testing.T) {
 		t.Errorf("Old events were not deleted")
 	}
 }
+
+func TestRemoveEvent(t *testing.T) {
+	timer := NewTimer()
+	timeout := 200
+	val := 0
+	count := count{&val}
+	id := timer.AddRepeatingEvent(addToCount, count, timeout, 2)
+	timer.RemoveEvent(id)
+	<-time.After(time.Duration(float32(timeout) * (1 + TOLERANCE)) * time.Millisecond)
+	if val != 0 {
+		t.Fatalf("Timer event was not removed")
+	}
+
+	if len(timer.eventMap) != 0 {
+		t.Errorf("Old events were not deleted")
+	}
+}
