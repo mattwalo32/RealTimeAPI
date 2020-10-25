@@ -38,7 +38,7 @@ func TestFindRoom_EncodeDecode(t *testing.T) {
 	if msg.PacketNumber != decodedMsg.PacketNumber {
 		t.Error("PacketNumbers do not match")
 	}
-	
+
 	if msg.ResponseRequired != decodedMsg.ResponseRequired {
 		t.Error("ResponseRequireds do not match")
 	}

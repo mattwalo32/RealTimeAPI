@@ -1,37 +1,37 @@
 package messages
 
 import (
-	"math/rand"
 	"github.com/google/uuid"
 	"github.com/mattwalo32/RealTimeAPI/internal/util"
+	"math/rand"
 )
 
 func RandRoomMessage() *FindRoomMessage {
 	return &FindRoomMessage{
-		SourceAddr: util.RandUDPAddr(),
-		DestAddr: util.RandUDPAddr(),
-		MessageID: uuid.New(),
-		PacketNumber: rand.Int(),
+		SourceAddr:       util.RandUDPAddr(),
+		DestAddr:         util.RandUDPAddr(),
+		MessageID:        uuid.New(),
+		PacketNumber:     rand.Int(),
 		ResponseRequired: util.RandBool(),
-	
-		UserID: uuid.New(),
+
+		UserID:              uuid.New(),
 		ShouldStartWhenFull: util.RandBool(),
 		MinPlayers:          rand.Int(),
 		MaxPlayers:          rand.Int(),
-	} 
+	}
 }
 
 func RandAcknowledgeMessage() *AcknowledgementMessage {
 	return &AcknowledgementMessage{
-		SourceAddr: util.RandUDPAddr(),
-		DestAddr: util.RandUDPAddr(),
-		MessageID: uuid.New(),
-		PacketNumber: rand.Int(),
+		SourceAddr:       util.RandUDPAddr(),
+		DestAddr:         util.RandUDPAddr(),
+		MessageID:        uuid.New(),
+		PacketNumber:     rand.Int(),
 		ResponseRequired: util.RandBool(),
-	
-		UserID: uuid.New(),
+
+		UserID:                uuid.New(),
 		AcknowledgedMessageID: uuid.New(),
-	} 
+	}
 }
 
 func RandEncodable() Encodable {

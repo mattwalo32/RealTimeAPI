@@ -8,10 +8,10 @@ import (
 )
 
 type FindRoomMessage struct {
-	SourceAddr net.UDPAddr
-	DestAddr   net.UDPAddr
-	MessageID  uuid.UUID
-	PacketNumber int
+	SourceAddr       net.UDPAddr
+	DestAddr         net.UDPAddr
+	MessageID        uuid.UUID
+	PacketNumber     int
 	ResponseRequired bool
 
 	UserID              uuid.UUID

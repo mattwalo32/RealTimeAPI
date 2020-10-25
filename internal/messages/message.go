@@ -1,9 +1,9 @@
 package messages
 
 import (
-	"github.com/google/uuid"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"net"
 )
 
