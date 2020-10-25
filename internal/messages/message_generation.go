@@ -34,6 +34,16 @@ func RandAcknowledgeMessage() *AcknowledgementMessage {
 	}
 }
 
+func RandJoinServerMessage() *AcknowledgementMessage {
+	return &AcknowledgementMessage{
+		SourceAddr:       util.RandUDPAddr(),
+		DestAddr:         util.RandUDPAddr(),
+		MessageID:        uuid.New(),
+		PacketNumber:     rand.Int(),
+		ResponseRequired: util.RandBool(),
+	}
+}
+
 func RandEncodable() Encodable {
 	// TODO: Do with all message types later
 	return RandRoomMessage()
