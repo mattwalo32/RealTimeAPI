@@ -14,10 +14,16 @@ const (
 
 type MessageHandler struct {
 	packetCount      int
+	clients          map[uuid.UUID]ClientData
 	config           *MessageHandlerConfig
 	udpManager       *conn.UDPManager
 	udpReceivingChan chan conn.Message
 	doneChan         chan bool
+}
+
+type ClientData struct {
+	Address net.UDPAddr
+	lastContactTime uint64
 }
 
 type MessageHandlerConfig struct {
@@ -32,6 +38,12 @@ type MessageHandlerConfig struct {
 
 	// Time between reliable message retries
 	MessageRetryTimeoutMs uint64
+
+	// How often to heartbeat with client to check if alive
+	HeartbeatIntervalMs uint64
+
+	// A client will be disconnected if they don't respond in this many heartbeat's time
+	HeartbeatActivationMultiplier float64
 }
 
 func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
