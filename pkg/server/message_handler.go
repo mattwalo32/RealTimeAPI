@@ -137,15 +137,23 @@ func (handler *MessageHandewr) sendMessage(msg messages.Encodable) {
 	handler.udpManager.SendMessage(udpMsg)
 	handler.packetCount++
 }
+
 func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
 	msg.SetResponseRequired(true)
 	msg.SetPacketNumber(handler.packetCount)
-	handler.createTimerForMessage(msg.GetID())
+	handler.createTimerForMessage(msg)
 	handler.sendMessage(msg)
 }
 
-func (hander *MessageHandler) createTimerForMessage(msgID uuid.UUID) {
-	// TODO:
+func (hander *MessageHandler) createTimerForMessage(msg messages.Encodable) {
+	c := handler.config
+	id := timer.AddRepeatingEvent(handler.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
+	handler.messageRetryEventIDs[msg.GetID()] = id
+}
+
+func (handler *MessageHandler) onMessageRetry(message interface{}) {
+	msg := message.(messages.Encodable)
+	handler.sendMessage(msg)
 }
 
 func (handler *MessageHandler) Stop() {
