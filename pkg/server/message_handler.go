@@ -2,6 +2,8 @@ package server
 
 import (
 	"fmt"
+	"net"
+	"github.com/google/uuid"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	log "github.com/sirupsen/logrus"
@@ -101,13 +103,12 @@ func (handler *MessageHandler) decodeMessages() {
 	}
 }
 
-func (handler *MessageHandler) processMessage(msg messages.Encodable) {
-	// TODO: Don't send back acknowledgment messages
-	handler.config.MessageReceivingChan <- message
+func (handler *MessageHandler) SendMessageUnreliably(msg messages.Encodable) {
+	msg.SetResponseRequired(false)
+	handler.sendMessage(msg)
 }
 
-func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
-	msg.SetResponseRequired(false)
+func (handler *MessageHandewr) sendMessage(msg messages.Encodable) {
 	msg.SetPacketNumber(handler.packetCount)
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
@@ -123,10 +124,10 @@ func (handler *MessageHandler) SendMessage(msg messages.Encodable) {
 	handler.udpManager.SendMessage(udpMsg)
 	handler.packetCount++
 }
-
 func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
 	msg.SetResponseRequired(true)
 	// TODO:
+	
 }
 
 func (handler *MessageHandler) Stop() {
