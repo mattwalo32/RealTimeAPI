@@ -15,8 +15,12 @@ const (
 )
 
 type MessageHandler struct {
+	// Maps client ID to their data
+	clients          map[uuid.UUID]*ClientData
+
+	// Maps messageID to outstanding message retry event IDs
+	messageRetryEventIDs map[uuid.UUID]uuid.UUID
 	packetCount      int
-	clients          map[uuid.UUID]ClientData
 	config           *MessageHandlerConfig
 	udpManager       *conn.UDPManager
 	udpReceivingChan chan conn.Message
@@ -24,8 +28,14 @@ type MessageHandler struct {
 }
 
 type ClientData struct {
+	lastContactTimeMs uint64
+	immutableData *ImmutableClientData
+}
+
+type ImmutableClientData struct {
 	Address net.UDPAddr
-	lastContactTime uint64
+	ID uuid.UUID
+	ProfileData string
 }
 
 type MessageHandlerConfig struct {
@@ -105,11 +115,11 @@ func (handler *MessageHandler) decodeMessages() {
 
 func (handler *MessageHandler) SendMessageUnreliably(msg messages.Encodable) {
 	msg.SetResponseRequired(false)
+	msg.SetPacketNumber(handler.packetCount)
 	handler.sendMessage(msg)
 }
 
 func (handler *MessageHandewr) sendMessage(msg messages.Encodable) {
-	msg.SetPacketNumber(handler.packetCount)
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)
@@ -126,8 +136,13 @@ func (handler *MessageHandewr) sendMessage(msg messages.Encodable) {
 }
 func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
 	msg.SetResponseRequired(true)
+	msg.SetPacketNumber(handler.packetCount)
+	handler.setTimerForMessage(msg.GetID())
+	handler.sendMessage(msg)
+}
+
+func (hander *MessageHandler) setTimerForMessage(msgID uuid.UUID) {
 	// TODO:
-	
 }
 
 func (handler *MessageHandler) Stop() {
