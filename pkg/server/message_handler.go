@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
+	"github.com/mattwalo32/RealTimeAPI/internal/timer"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -21,6 +22,7 @@ type MessageHandler struct {
 	// Maps messageID to outstanding message retry event IDs
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
 	packetCount      int
+	timer *timer.Timer
 	config           *MessageHandlerConfig
 	udpManager       *conn.UDPManager
 	udpReceivingChan chan conn.Message
@@ -74,6 +76,7 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 		udpManager:       conn.NewUDPManager(udpConfig),
 		udpReceivingChan: udpReceivingChan,
 		doneChan:         make(chan bool),
+		timer: timer.NewTimer(),
 		config:           &config,
 		packetCount: 0,
 	}
@@ -137,15 +140,16 @@ func (handler *MessageHandewr) sendMessage(msg messages.Encodable) {
 func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
 	msg.SetResponseRequired(true)
 	msg.SetPacketNumber(handler.packetCount)
-	handler.setTimerForMessage(msg.GetID())
+	handler.createTimerForMessage(msg.GetID())
 	handler.sendMessage(msg)
 }
 
-func (hander *MessageHandler) setTimerForMessage(msgID uuid.UUID) {
+func (hander *MessageHandler) createTimerForMessage(msgID uuid.UUID) {
 	// TODO:
 }
 
 func (handler *MessageHandler) Stop() {
 	handler.udpManager.Stop()
+	handler.timer.Stop()
 	close(handler.doneChan)
 }
