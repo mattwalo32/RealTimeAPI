@@ -2,12 +2,12 @@ package server
 
 import (
 	"fmt"
-	"net"
 	"github.com/google/uuid"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	"github.com/mattwalo32/RealTimeAPI/internal/timer"
 	log "github.com/sirupsen/logrus"
+	"net"
 )
 
 const (
@@ -17,26 +17,26 @@ const (
 
 type MessageHandler struct {
 	// Maps client ID to their data
-	clients          map[uuid.UUID]*ClientData
+	clients map[uuid.UUID]*ClientData
 
 	// Maps messageID to outstanding message retry event IDs
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
-	packetCount      int
-	timer *timer.Timer
-	config           *MessageHandlerConfig
-	udpManager       *conn.UDPManager
-	udpReceivingChan chan conn.Message
-	doneChan         chan bool
+	packetCount          int
+	timer                *timer.Timer
+	config               *MessageHandlerConfig
+	udpManager           *conn.UDPManager
+	udpReceivingChan     chan conn.Message
+	doneChan             chan bool
 }
 
 type ClientData struct {
 	lastContactTimeMs uint64
-	immutableData *ImmutableClientData
+	immutableData     *ImmutableClientData
 }
 
 type ImmutableClientData struct {
-	Address net.UDPAddr
-	ID uuid.UUID
+	Address     net.UDPAddr
+	ID          uuid.UUID
 	ProfileData string
 }
 
@@ -76,9 +76,9 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 		udpManager:       conn.NewUDPManager(udpConfig),
 		udpReceivingChan: udpReceivingChan,
 		doneChan:         make(chan bool),
-		timer: timer.NewTimer(),
+		timer:            timer.NewTimer(),
 		config:           &config,
-		packetCount: 0,
+		packetCount:      0,
 	}
 
 	go handler.decodeMessages()
