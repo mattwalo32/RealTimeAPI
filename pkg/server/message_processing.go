@@ -26,4 +26,5 @@ func (handler *MessageHandler) removeMessageTimer(msg messages.AcknowledgementMe
 	}
 
 	handler.timer.RemoveEvent(evtID)
+	remove(handler.messageRetryEventIDs, evtID)
 }
