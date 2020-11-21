@@ -28,7 +28,7 @@ func NewTimer() *Timer {
 	return timer
 }
 
-func (timer *Timer) startTimerForEvent(eventID uuid.UUID, numRepeats int, timeoutMs int) {
+func (timer *Timer) startTimerForEvent(eventID uuid.UUID, numRepeats int, timeoutMs uint64) {
 	for i := 0; i < numRepeats; i++ {
 		select {
 		case <-timer.doneChan:
@@ -51,7 +51,7 @@ func (timer *Timer) startTimerForEvent(eventID uuid.UUID, numRepeats int, timeou
 	timer.lock.Unlock()
 }
 
-func (timer *Timer) AddRepeatingEvent(callback TimerCallback, capture interface{}, timeoutMs int, numberRepeats int) uuid.UUID {
+func (timer *Timer) AddRepeatingEvent(callback TimerCallback, capture interface{}, timeoutMs uint64, numberRepeats int) uuid.UUID {
 	id := uuid.New()
 	event := &TimerEvent{
 		callback: callback,

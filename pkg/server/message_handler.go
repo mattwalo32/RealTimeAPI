@@ -122,7 +122,7 @@ func (handler *MessageHandler) SendMessageUnreliably(msg messages.Encodable) {
 	handler.sendMessage(msg)
 }
 
-func (handler *MessageHandewr) sendMessage(msg messages.Encodable) {
+func (handler *MessageHandler) sendMessage(msg messages.Encodable) {
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)
@@ -145,9 +145,9 @@ func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
 	handler.sendMessage(msg)
 }
 
-func (hander *MessageHandler) createTimerForMessage(msg messages.Encodable) {
+func (handler *MessageHandler) createTimerForMessage(msg messages.Encodable) {
 	c := handler.config
-	id := timer.AddRepeatingEvent(handler.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
+	id := handler.timer.AddRepeatingEvent(handler.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
 	handler.messageRetryEventIDs[msg.GetID()] = id
 }
 
