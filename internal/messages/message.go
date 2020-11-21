@@ -63,6 +63,14 @@ func DecodeFromHeader(data []byte) (Encodable, error) {
 		message := &FindRoomMessage{}
 		message.Decode(header.Data)
 		return message, err
+	case MESSAGE_ACKNOWLEDGE:
+		message := &AcknowledgementMessage{}
+		message.Decode(header.Data)
+		return message, err
+	case MESSAGE_JOIN_SERVER:
+		message := &JoinServerMessage{}
+		message.Decode(header.Data)
+		return message, err
 	default:
 		return nil, fmt.Errorf("Cannot decode unrecognized message type: %v", header.MessageType)
 	}

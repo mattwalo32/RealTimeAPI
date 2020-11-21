@@ -2,7 +2,7 @@ package conn
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net"
 )
 
@@ -99,6 +99,11 @@ func (manager *UDPManager) listenUDP() {
 			Address: *addr,
 		}
 
+		log.WithFields(log.Fields{
+			"Data": msg.Data,
+			"Address": msg.Address,
+		}).Trace("Received message via UDP")
+
 		manager.config.ReceivingChan <- msg
 	}
 }
@@ -112,6 +117,11 @@ func (manager *UDPManager) sendUDP() {
 			return
 		case msg = <-manager.sendingChan:
 		}
+
+		log.WithFields(log.Fields{
+			"Data": msg.Data,
+			"Address": msg.Address,
+		}).Trace("Sending message via UDP")
 
 		_, err := manager.conn.WriteToUDP(msg.Data, &msg.Address)
 		if err != nil {

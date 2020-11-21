@@ -32,13 +32,13 @@ func TestSendMessages(t *testing.T) {
 
 	test_messages := make([]messages.Encodable, numTestMessages)
 	for i := 0; i < 20; i++ {
-		test_messages[i] = messages.RandEncodable()
+		test_messages[i] = messages.RandGameMessage()
 		test_messages[i].SetSource(*clientAUDPAddr)
 		test_messages[i].SetDestination(*clientBUDPAddr)
 	}
 
 	for packetNum, msg := range test_messages {
-		handlerA.SendMessage(msg)
+		handlerA.SendMessageUnreliably(msg)
 		response := <-clientBReceivingChan
 
 		if response.GetMessageType() != msg.GetMessageType() {

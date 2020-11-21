@@ -44,6 +44,17 @@ func RandJoinServerMessage() *AcknowledgementMessage {
 	}
 }
 
+func RandGameMessage() Encodable {
+	messageType := rand.Intn(1)
+
+	switch messageType {
+	case 0:
+		return RandRoomMessage()
+	}
+
+	return RandRoomMessage()
+}
+
 func RandEncodable() Encodable {
 	messageType := rand.Intn(3)
 

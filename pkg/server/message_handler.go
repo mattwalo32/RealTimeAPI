@@ -81,6 +81,9 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 		packetCount:      0,
 	}
 
+	// Remove this later. Only for debugging
+	log.SetLevel(log.TraceLevel)
+
 	go handler.decodeMessages()
 	return handler
 }
