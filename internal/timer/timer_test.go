@@ -23,7 +23,7 @@ func TestSingleEvent(t *testing.T) {
 	val := 0
 	count := count{&val}
 
-	callbackTimes := []int{100, 500, 1000}
+	callbackTimes := []uint64{100, 500, 1000}
 	for _, timeout := range callbackTimes {
 		prevVal := val
 		timer.AddRepeatingEvent(addToCount, count, timeout, 1)
@@ -45,7 +45,7 @@ func TestSingleEvent(t *testing.T) {
 
 func TestRepeatingEvent(t *testing.T) {
 	timer := NewTimer()
-	timeout := 500
+	timeout := uint64(500)
 	repetitions := []int{2, 5}
 
 	for _, numReps := range repetitions {
@@ -68,7 +68,7 @@ func TestRepeatingEvent(t *testing.T) {
 
 func TestRemoveEvent(t *testing.T) {
 	timer := NewTimer()
-	timeout := 200
+	timeout := uint64(200)
 	val := 0
 	count := count{&val}
 	id := timer.AddRepeatingEvent(addToCount, count, timeout, 2)

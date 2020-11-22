@@ -43,10 +43,6 @@ func TestAcknowledge_EncodeDecode(t *testing.T) {
 		t.Error("ResponseRequireds do not match")
 	}
 
-	if msg.UserID != decodedMsg.UserID {
-		t.Error("UserIDs do not match")
-	}
-
 	if msg.AcknowledgedMessageID != decodedMsg.AcknowledgedMessageID {
 		t.Error("Acknowledged Message IDs do not match")
 	}
