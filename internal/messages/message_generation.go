@@ -29,7 +29,6 @@ func RandAcknowledgeMessage() *AcknowledgementMessage {
 		PacketNumber:     rand.Int(),
 		ResponseRequired: util.RandBool(),
 
-		UserID:                uuid.New(),
 		AcknowledgedMessageID: uuid.New(),
 	}
 }

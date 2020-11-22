@@ -15,6 +15,7 @@ const (
 type UDPManager struct {
 	config *UDPManagerConfig
 	conn   *net.UDPConn
+	addr *net.UDPAddr
 
 	sendingChan chan Message
 	doneChan    chan bool
@@ -72,6 +73,7 @@ func (manager *UDPManager) initConn() {
 		log.Fatal(fmt.Sprintf("Error resolving address (%v): %v", address, err))
 	}
 
+	manager.addr = addr
 	manager.conn, err = net.ListenUDP("udp", addr)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Error listening on UDP: %v", err))
@@ -132,6 +134,10 @@ func (manager *UDPManager) sendUDP() {
 
 func (manager *UDPManager) SendMessage(msg Message) {
 	manager.sendingChan <- msg
+}
+
+func (manager *UDPManager) GetUDPAddr() *net.UDPAddr {
+	return manager.addr
 }
 
 func (manager *UDPManager) Stop() {

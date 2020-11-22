@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
+	"github.com/google/uuid"
 )
 
 func (handler *MessageHandler) processMessage(msg messages.Encodable) {
@@ -12,6 +13,10 @@ func (handler *MessageHandler) processMessage(msg messages.Encodable) {
 		// TODO: Send back uuid
 	default:
 		handler.config.MessageReceivingChan <- msg
+	}
+
+	if msg.IsResponseRequired() {
+		handler.acknowledgeMessage(msg)
 	}
 }
 
@@ -27,4 +32,18 @@ func (handler *MessageHandler) removeMessageTimer(msg messages.AcknowledgementMe
 
 	handler.timer.RemoveEvent(evtID)
 	delete(handler.messageRetryEventIDs, evtID)
+}
+
+func (handler *MessageHandler) acknowledgeMessage(msg messages.Encodable) {
+	ackMessage := &messages.AcknowledgementMessage{
+		SourceAddr: *handler.udpManager.GetUDPAddr(),
+		DestAddr: msg.GetSource(),
+		MessageID: uuid.New(),
+		PacketNumber: handler.packetCount,
+		ResponseRequired: false,
+		AcknowledgedMessageID: msg.GetID(),
+	}
+
+	handler.packetCount++
+	handler.SendMessageUnreliably(ackMessage)
 }

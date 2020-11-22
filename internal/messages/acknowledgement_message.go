@@ -14,7 +14,6 @@ type AcknowledgementMessage struct {
 	PacketNumber     int
 	ResponseRequired bool
 
-	UserID                uuid.UUID
 	AcknowledgedMessageID uuid.UUID
 }
 
