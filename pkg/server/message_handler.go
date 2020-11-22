@@ -76,6 +76,8 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 		udpManager:       conn.NewUDPManager(udpConfig),
 		udpReceivingChan: udpReceivingChan,
 		doneChan:         make(chan bool),
+		clients: make(map[uuid.UUID]*ClientData),
+		messageRetryEventIDs: make(map[uuid.UUID]uuid.UUID),
 		timer:            timer.NewTimer(),
 		config:           &config,
 		packetCount:      0,

@@ -20,12 +20,12 @@ func createMessageHandler(address string) (chan messages.Encodable, *server.Mess
 	return receivingChan, server.NewMessageHandler(config)
 }
 
-func TestSendMessages(t *testing.T) {
+func TestSendGameMessages_Unreliable(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 20
 	_, handlerA := createMessageHandler(clientAAddress)
-	clientBReceivingChan, _ := createMessageHandler(clientBAddress)
+	clientBReceivingChan, handlerB := createMessageHandler(clientBAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
@@ -64,4 +64,59 @@ func TestSendMessages(t *testing.T) {
 			t.Errorf("The content of the sent and received messages differ")
 		}
 	}
+
+	handlerA.Stop()
+	handlerB.Stop()
+}
+
+// TODO: Test send Non-Game Messages
+// TODO: Test send reliable
+
+func TestSendGameMessages_Reliable(t *testing.T) {
+	clientAAddress := "localhost:9999"
+	clientBAddress := "localhost:9998"
+	numTestMessages := 20
+	_, handlerA := createMessageHandler(clientAAddress)
+	clientBReceivingChan, handlerB := createMessageHandler(clientBAddress)
+
+	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
+	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
+
+	test_messages := make([]messages.Encodable, numTestMessages)
+	for i := 0; i < 20; i++ {
+		test_messages[i] = messages.RandGameMessage()
+		test_messages[i].SetSource(*clientAUDPAddr)
+		test_messages[i].SetDestination(*clientBUDPAddr)
+	}
+
+	for packetNum, msg := range test_messages {
+		handlerA.SendMessageReliably(msg)
+		response := <-clientBReceivingChan
+
+		if response.GetMessageType() != msg.GetMessageType() {
+			t.Fatalf("Expected message type %v, got: %v", msg.GetMessageType(), response.GetMessageType())
+		}
+
+		if response.GetPacketNumber() != packetNum {
+			t.Errorf("Expected packet number of %v, got: %v", packetNum, response.GetPacketNumber())
+		}
+
+		if !response.IsResponseRequired() {
+			t.Errorf("Expected response required")
+		}
+
+		source := response.GetSource()
+		if source.String() != clientAUDPAddr.String() {
+			t.Errorf("Expected message to be from %v, got: %v", clientAUDPAddr, response.GetSource())
+		}
+
+		expectedBytes, _ := msg.Encode()
+		actualBytes, _ := response.Encode()
+		if !bytes.Equal(expectedBytes, actualBytes) {
+			t.Errorf("The content of the sent and received messages differ")
+		}
+	}
+
+	handlerA.Stop()
+	handlerB.Stop()
 }
