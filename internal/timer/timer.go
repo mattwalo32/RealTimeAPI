@@ -72,6 +72,12 @@ func (timer *Timer) RemoveEvent(eventID uuid.UUID) {
 	delete(timer.eventMap, eventID)
 }
 
+func (timer *Timer) NumEvents() int {
+	timer.lock.Lock()
+	defer timer.lock.Unlock()
+	return len(timer.eventMap)
+}
+
 func (timer *Timer) Stop() {
 	close(timer.doneChan)
 }
