@@ -7,6 +7,7 @@ import (
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	"github.com/mattwalo32/RealTimeAPI/internal/timer"
 	log "github.com/sirupsen/logrus"
+	"sync"
 	"net"
 )
 
@@ -27,6 +28,7 @@ type MessageHandler struct {
 	udpManager           *conn.UDPManager
 	udpReceivingChan     chan conn.Message
 	doneChan             chan bool
+	lock sync.Mutex
 }
 
 type ClientData struct {
@@ -124,6 +126,8 @@ func (handler *MessageHandler) decodeMessages() {
 }
 
 func (handler *MessageHandler) SendMessageUnreliably(msg messages.Encodable) {
+	handler.lock.Lock()
+	defer handler.lock.Unlock()
 	msg.SetResponseRequired(false)
 	msg.SetPacketNumber(handler.packetCount)
 	handler.sendMessage(msg)
@@ -150,6 +154,8 @@ func (handler *MessageHandler) sendMessage(msg messages.Encodable) {
 }
 
 func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
+	handler.lock.Lock()
+	defer handler.lock.Unlock()
 	msg.SetResponseRequired(true)
 	msg.SetPacketNumber(handler.packetCount)
 	handler.createTimerForMessage(msg)

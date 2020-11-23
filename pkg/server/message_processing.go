@@ -26,6 +26,8 @@ func (handler *MessageHandler) processAcknowledge(msg *messages.AcknowledgementM
 }
 
 func (handler *MessageHandler) removeMessageTimer(msg *messages.AcknowledgementMessage) {
+	handler.lock.Lock()
+	defer handler.lock.Unlock()
 	evtID, evtExists := handler.messageRetryEventIDs[msg.AcknowledgedMessageID]
 	if !evtExists {
 		log.WithFields(log.Fields{
