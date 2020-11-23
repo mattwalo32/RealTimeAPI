@@ -84,7 +84,7 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 	}
 
 	// Remove this later. Only for debugging
-	log.SetLevel(log.TraceLevel)
+	log.SetLevel(log.DebugLevel)
 
 	go handler.decodeMessages()
 	return handler
@@ -110,12 +110,14 @@ func (handler *MessageHandler) decodeMessages() {
 		}
 
 		message, err := messages.DecodeFromHeader(udpMsg.Data)
-
 		if err != nil {
 			log.Warn(err)
 			continue
 		}
 
+		log.WithFields(log.Fields{
+			"Type": message.GetMessageType(),
+		}).Debug("Decoded Message")
 		message.SetSource(udpMsg.Address)
 		handler.processMessage(message)
 	}
@@ -139,6 +141,10 @@ func (handler *MessageHandler) sendMessage(msg messages.Encodable) {
 		Address: msg.GetDestination(),
 	}
 
+	log.WithFields(log.Fields{
+		"Type": msg.GetMessageType(),
+		"Destination": msg.GetDestination(),
+	}).Debug("Sending Message")
 	handler.udpManager.SendMessage(udpMsg)
 	handler.packetCount++
 }
@@ -154,9 +160,13 @@ func (handler *MessageHandler) createTimerForMessage(msg messages.Encodable) {
 	c := handler.config
 	id := handler.timer.AddRepeatingEvent(handler.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
 	handler.messageRetryEventIDs[msg.GetID()] = id
+	log.WithFields(log.Fields{
+		"ID": msg.GetID(),
+	}).Debug("Adding timer for message")
 }
 
 func (handler *MessageHandler) onMessageRetry(message interface{}) {
+	log.Debug("Resending message")
 	msg := message.(messages.Encodable)
 	handler.sendMessage(msg)
 }

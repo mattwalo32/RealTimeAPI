@@ -3,12 +3,13 @@ package server
 import (
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 func (handler *MessageHandler) processMessage(msg messages.Encodable) {
 	switch msg.GetMessageType() {
 	case messages.MESSAGE_ACKNOWLEDGE:
-		// TODO: Handle acknowledgment
+		handler.processAcknowledge(msg.(*messages.AcknowledgementMessage))
 	case messages.MESSAGE_JOIN_SERVER:
 		// TODO: Send back uuid
 	default:
@@ -20,18 +21,24 @@ func (handler *MessageHandler) processMessage(msg messages.Encodable) {
 	}
 }
 
-func (handler *MessageHandler) processAcknowledge(msg messages.AcknowledgementMessage) {
+func (handler *MessageHandler) processAcknowledge(msg *messages.AcknowledgementMessage) {
 	handler.removeMessageTimer(msg)
 }
 
-func (handler *MessageHandler) removeMessageTimer(msg messages.AcknowledgementMessage) {
-	evtID, evtExists := handler.messageRetryEventIDs[msg.GetID()]
+func (handler *MessageHandler) removeMessageTimer(msg *messages.AcknowledgementMessage) {
+	evtID, evtExists := handler.messageRetryEventIDs[msg.AcknowledgedMessageID]
 	if !evtExists {
+		log.WithFields(log.Fields{
+			"ID": msg.AcknowledgedMessageID,
+		}).Debug("Acknowledged message without a timer")
 		return
 	}
 
+	log.WithFields(log.Fields{
+		"ID": msg.AcknowledgedMessageID,
+	}).Debug("Recieved acknowledgement for message")
 	handler.timer.RemoveEvent(evtID)
-	delete(handler.messageRetryEventIDs, evtID)
+	delete(handler.messageRetryEventIDs, msg.AcknowledgedMessageID)
 }
 
 func (handler *MessageHandler) acknowledgeMessage(msg messages.Encodable) {
@@ -39,11 +46,8 @@ func (handler *MessageHandler) acknowledgeMessage(msg messages.Encodable) {
 		SourceAddr: *handler.udpManager.GetUDPAddr(),
 		DestAddr: msg.GetSource(),
 		MessageID: uuid.New(),
-		PacketNumber: handler.packetCount,
-		ResponseRequired: false,
 		AcknowledgedMessageID: msg.GetID(),
 	}
 
-	handler.packetCount++
 	handler.SendMessageUnreliably(ackMessage)
 }
