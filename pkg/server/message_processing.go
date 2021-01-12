@@ -11,18 +11,15 @@ func (handler *MessageHandler) processMessage(msg messages.Message) {
 	case messages.MESSAGE_ACKNOWLEDGE:
 		handler.processAcknowledge(msg.(*messages.AcknowledgementMessage))
 	case messages.MESSAGE_JOIN_SERVER:
-		// TODO: Send back uuid
+		handler.processJoinServer(msg.(*messages.JoinServerMessage))
 	default:
 		handler.config.MessageReceivingChan <- msg
 	}
 
+	// TODO: Don't allow acknowledgement messages to get acknowledged
 	if msg.IsResponseRequired() {
 		handler.acknowledgeMessage(msg)
 	}
-}
-
-func (handler *MessageHandler) processAcknowledge(msg *messages.AcknowledgementMessage) {
-	handler.removeMessageTimer(msg)
 }
 
 func (handler *MessageHandler) removeMessageTimer(msg *messages.AcknowledgementMessage) {
