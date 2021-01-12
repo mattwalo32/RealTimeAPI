@@ -42,7 +42,7 @@ func TestSendMessages(t *testing.T) {
 			Address: *clientBUDPAddr,
 		}
 
-		managerA.SendMessage(msg)
+		managerA.SendPacket(msg)
 		response := <-clientBReceivingChan
 
 		if !bytes.Equal(response.Data, testData) {

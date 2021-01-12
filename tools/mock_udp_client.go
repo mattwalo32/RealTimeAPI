@@ -30,7 +30,7 @@ func main() {
 	signal.Notify(interrupt, os.Interrupt)
 
 	<-interrupt
-	manager.Close()
+	manager.Stop()
 	close(doneChan)
 }
 
