@@ -20,7 +20,7 @@ const (
 	MESSAGE_END_GAME
 )
 
-type Encodable interface {
+type Message interface {
 	Encode() ([]byte, error)
 	Decode([]byte)
 	GetSource() net.UDPAddr
@@ -40,7 +40,7 @@ type encodedMessage struct {
 	Data        []byte
 }
 
-func EncodeWithHeader(encodable Encodable) ([]byte, error) {
+func EncodeWithHeader(encodable Message) ([]byte, error) {
 	data, err := encodable.Encode()
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func EncodeWithHeader(encodable Encodable) ([]byte, error) {
 	return json.Marshal(message)
 }
 
-func DecodeFromHeader(data []byte) (Encodable, error) {
+func DecodeFromHeader(data []byte) (Message, error) {
 	var header encodedMessage
 	err := json.Unmarshal(data, &header)
 

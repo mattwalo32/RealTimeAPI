@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (handler *MessageHandler) processMessage(msg messages.Encodable) {
+func (handler *MessageHandler) processMessage(msg messages.Message) {
 	switch msg.GetMessageType() {
 	case messages.MESSAGE_ACKNOWLEDGE:
 		handler.processAcknowledge(msg.(*messages.AcknowledgementMessage))
@@ -43,7 +43,7 @@ func (handler *MessageHandler) removeMessageTimer(msg *messages.AcknowledgementM
 	delete(handler.messageRetryEventIDs, msg.AcknowledgedMessageID)
 }
 
-func (handler *MessageHandler) acknowledgeMessage(msg messages.Encodable) {
+func (handler *MessageHandler) acknowledgeMessage(msg messages.Message) {
 	ackMessage := &messages.AcknowledgementMessage{
 		SourceAddr: *handler.udpManager.GetUDPAddr(),
 		DestAddr: msg.GetSource(),

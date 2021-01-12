@@ -7,7 +7,7 @@ import (
 
 func TestAssertConfigValid_TooShort(t *testing.T) {
 	config := &MessageHandlerConfig{
-		MessageReceivingChan: make(chan messages.Encodable, MIN_RECEIVING_CHAN_CAP-1),
+		MessageReceivingChan: make(chan messages.Message, MIN_RECEIVING_CHAN_CAP-1),
 		Address:              "",
 	}
 
@@ -19,7 +19,7 @@ func TestAssertConfigValid_TooShort(t *testing.T) {
 
 func TestAssertConfigValid_Valid(t *testing.T) {
 	config := &MessageHandlerConfig{
-		MessageReceivingChan: make(chan messages.Encodable, MIN_RECEIVING_CHAN_CAP),
+		MessageReceivingChan: make(chan messages.Message, MIN_RECEIVING_CHAN_CAP),
 		Address:              "",
 	}
 

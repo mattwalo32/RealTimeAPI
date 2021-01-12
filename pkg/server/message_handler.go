@@ -44,7 +44,7 @@ type ImmutableClientData struct {
 
 type MessageHandlerConfig struct {
 	// Acts as callback mechanism for decoded messages
-	MessageReceivingChan chan messages.Encodable
+	MessageReceivingChan chan messages.Message
 
 	// Passed to UDPManager
 	Address string
@@ -125,7 +125,7 @@ func (handler *MessageHandler) decodeMessages() {
 	}
 }
 
-func (handler *MessageHandler) SendMessageUnreliably(msg messages.Encodable) {
+func (handler *MessageHandler) SendMessageUnreliably(msg messages.Message) {
 	handler.lock.Lock()
 	defer handler.lock.Unlock()
 	msg.SetResponseRequired(false)
@@ -133,7 +133,7 @@ func (handler *MessageHandler) SendMessageUnreliably(msg messages.Encodable) {
 	handler.sendMessage(msg)
 }
 
-func (handler *MessageHandler) sendMessage(msg messages.Encodable) {
+func (handler *MessageHandler) sendMessage(msg messages.Message) {
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)
@@ -153,7 +153,7 @@ func (handler *MessageHandler) sendMessage(msg messages.Encodable) {
 	handler.packetCount++
 }
 
-func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
+func (handler *MessageHandler) SendMessageReliably(msg messages.Message) {
 	handler.lock.Lock()
 	defer handler.lock.Unlock()
 	msg.SetResponseRequired(true)
@@ -162,7 +162,7 @@ func (handler *MessageHandler) SendMessageReliably(msg messages.Encodable) {
 	handler.sendMessage(msg)
 }
 
-func (handler *MessageHandler) createTimerForMessage(msg messages.Encodable) {
+func (handler *MessageHandler) createTimerForMessage(msg messages.Message) {
 	c := handler.config
 	id := handler.timer.AddRepeatingEvent(handler.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
 	handler.messageRetryEventIDs[msg.GetID()] = id
@@ -173,7 +173,7 @@ func (handler *MessageHandler) createTimerForMessage(msg messages.Encodable) {
 
 func (handler *MessageHandler) onMessageRetry(message interface{}) {
 	log.Debug("Resending message")
-	msg := message.(messages.Encodable)
+	msg := message.(messages.Message)
 	handler.sendMessage(msg)
 }
 

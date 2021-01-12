@@ -12,8 +12,8 @@ const (
 	RESPONSE_WAIT_TIME = 1000 * time.Millisecond
 )
 
-func createMessageHandler(address string) (chan messages.Encodable, *MessageHandler) {
-	receivingChan := make(chan messages.Encodable, 10)
+func createMessageHandler(address string) (chan messages.Message, *MessageHandler) {
+	receivingChan := make(chan messages.Message, 10)
 	config := MessageHandlerConfig{
 		MessageReceivingChan:  receivingChan,
 		MaxMessageRetries:     5,
@@ -34,7 +34,7 @@ func TestSendGameMessages_Unreliable(t *testing.T) {
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
 
-	test_messages := make([]messages.Encodable, numTestMessages)
+	test_messages := make([]messages.Message, numTestMessages)
 	for i := 0; i < numTestMessages; i++ {
 		test_messages[i] = messages.RandGameMessage()
 		test_messages[i].SetSource(*clientAUDPAddr)
@@ -85,7 +85,7 @@ func TestSendGameMessages_Reliable_NoResponse(t *testing.T) {
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
 
-	test_messages := make([]messages.Encodable, numTestMessages)
+	test_messages := make([]messages.Message, numTestMessages)
 	for i := 0; i < numTestMessages; i++ {
 		test_messages[i] = messages.RandGameMessage()
 		test_messages[i].SetSource(*clientAUDPAddr)
@@ -117,9 +117,9 @@ func TestSendGameMessages_Reliable_Response(t *testing.T) {
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
 
-	test_messages := make([]messages.Encodable, numTestMessages)
+	test_messages := make([]messages.Message, numTestMessages)
 	for i := 0; i < numTestMessages; i++ {
-		test_messages[i] = messages.RandEncodable()
+		test_messages[i] = messages.RandMessage()
 		test_messages[i].SetSource(*clientAUDPAddr)
 		test_messages[i].SetDestination(*clientBUDPAddr)
 	}
