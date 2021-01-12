@@ -18,7 +18,7 @@ const (
 
 type MessageHandler struct {
 	// Maps client ID to their data
-	clients map[uuid.UUID]*ClientData
+	clients map[uuid.UUID]*Client
 
 	// Maps messageID to outstanding message retry event IDs
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
@@ -31,15 +31,11 @@ type MessageHandler struct {
 	lock sync.Mutex
 }
 
-type ClientData struct {
-	lastContactTimeMs uint64
-	immutableData     *ImmutableClientData
-}
-
-type ImmutableClientData struct {
+type Client struct {
 	Address     net.UDPAddr
 	ID          uuid.UUID
-	ProfileData string
+	AppData     string
+	lastContactTimeMs uint64
 }
 
 type MessageHandlerConfig struct {
