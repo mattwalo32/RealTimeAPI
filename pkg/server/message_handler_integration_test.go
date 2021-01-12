@@ -9,15 +9,15 @@ import (
 )
 
 const (
-	RESPONSE_WAIT_TIME = 500 * time.Millisecond
+	RESPONSE_WAIT_TIME = 1000 * time.Millisecond
 )
 
 func createMessageHandler(address string) (chan messages.Encodable, *MessageHandler) {
-	receivingChan := make(chan messages.Encodable, 5)
+	receivingChan := make(chan messages.Encodable, 10)
 	config := MessageHandlerConfig{
 		MessageReceivingChan:  receivingChan,
-		MaxMessageRetries:     2,
-		MessageRetryTimeoutMs: uint64(5000),
+		MaxMessageRetries:     5,
+		MessageRetryTimeoutMs: uint64(500),
 		Address:               address,
 	}
 
@@ -110,7 +110,7 @@ func TestSendGameMessages_Reliable_NoResponse(t *testing.T) {
 func TestSendGameMessages_Reliable_Response(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
-	numTestMessages := 10
+	numTestMessages := 3
 	_, handlerA := createMessageHandler(clientAAddress)
 	_, handlerB := createMessageHandler(clientBAddress)
 

@@ -20,10 +20,10 @@ var (
 )
 
 func main() {
-	receivingChan := make(chan conn.Message, 2)
+	receivingChan := make(chan conn.Packet, 2)
 	manager := createUDPManager(receivingChan)
 
-	go printIncomingMessages(receivingChan)
+	go printIncomingPackets(receivingChan)
 	go sendUserInput(manager)
 
 	interrupt := make(chan os.Signal)
@@ -34,7 +34,7 @@ func main() {
 	close(doneChan)
 }
 
-func createUDPManager(receivingChan chan conn.Message) *conn.UDPManager {
+func createUDPManager(receivingChan chan conn.Packet) *conn.UDPManager {
 	if len(os.Args) < MIN_NUMBER_ARGS+1 {
 		log.Fatal(errorMissingArgs)
 	}
@@ -48,7 +48,7 @@ func createUDPManager(receivingChan chan conn.Message) *conn.UDPManager {
 	return conn.NewUDPManager(config)
 }
 
-func printIncomingMessages(receivingChan chan conn.Message) {
+func printIncomingPackets(receivingChan chan conn.Packet) {
 	for {
 		select {
 		case <-doneChan:
@@ -66,12 +66,12 @@ func sendUserInput(manager *conn.UDPManager) {
 	for {
 		fmt.Scanln(&input)
 
-		msg := conn.Message{
+		msg := conn.Packet{
 			Data:    []byte(input),
 			Address: writeAddress,
 		}
 
-		manager.SendMessage(msg)
+		manager.SendPacket(msg)
 	}
 }
 

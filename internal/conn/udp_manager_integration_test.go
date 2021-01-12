@@ -9,8 +9,8 @@ import (
 
 var ()
 
-func createUDPManager(address string) (chan conn.Message, *conn.UDPManager) {
-	receivingChan := make(chan conn.Message, 2)
+func createUDPManager(address string) (chan conn.Packet, *conn.UDPManager) {
+	receivingChan := make(chan conn.Packet, 2)
 	config := conn.UDPManagerConfig{
 		ReceivingChan: receivingChan,
 		Address:       address,
@@ -37,7 +37,7 @@ func TestSendMessages(t *testing.T) {
 	}
 
 	for _, testData := range message_tests {
-		msg := conn.Message{
+		msg := conn.Packet{
 			Data:    testData,
 			Address: *clientBUDPAddr,
 		}

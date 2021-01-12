@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	UDP_RECEIVING_CHAN_SIZE = 5
+	UDP_RECEIVING_CHAN_SIZE = 15
 	MIN_RECEIVING_CHAN_CAP  = 2
 )
 
@@ -26,7 +26,7 @@ type MessageHandler struct {
 	timer                *timer.Timer
 	config               *MessageHandlerConfig
 	udpManager           *conn.UDPManager
-	udpReceivingChan     chan conn.Message
+	udpReceivingChan     chan conn.Packet
 	doneChan             chan bool
 	lock sync.Mutex
 }
@@ -63,7 +63,7 @@ type MessageHandlerConfig struct {
 }
 
 func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
-	udpReceivingChan := make(chan conn.Message, UDP_RECEIVING_CHAN_SIZE)
+	udpReceivingChan := make(chan conn.Packet, UDP_RECEIVING_CHAN_SIZE)
 	err := assertConfigValid(&config)
 	if err != nil {
 		log.Fatal(err)
@@ -102,7 +102,7 @@ func assertConfigValid(config *MessageHandlerConfig) error {
 }
 
 func (handler *MessageHandler) decodeMessages() {
-	var udpMsg conn.Message
+	var udpMsg conn.Packet
 
 	for {
 		select {
@@ -140,7 +140,7 @@ func (handler *MessageHandler) sendMessage(msg messages.Encodable) {
 		return
 	}
 
-	udpMsg := conn.Message{
+	udpMsg := conn.Packet{
 		Data:    data,
 		Address: msg.GetDestination(),
 	}
@@ -149,7 +149,7 @@ func (handler *MessageHandler) sendMessage(msg messages.Encodable) {
 		"Type": msg.GetMessageType(),
 		"Destination": msg.GetDestination(),
 	}).Debug("Sending Message")
-	handler.udpManager.SendMessage(udpMsg)
+	handler.udpManager.SendPacket(udpMsg)
 	handler.packetCount++
 }
 

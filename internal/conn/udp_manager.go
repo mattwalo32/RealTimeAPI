@@ -8,7 +8,7 @@ import (
 
 const (
 	MIN_RECEIVING_CHAN_CAP = 2
-	SENDING_CHAN_CAP       = 10
+	SENDING_CHAN_CAP       = 15
 	BUFFER_SIZE            = 1024
 )
 
@@ -17,19 +17,19 @@ type UDPManager struct {
 	conn   *net.UDPConn
 	addr *net.UDPAddr
 
-	sendingChan chan Message
+	sendingChan chan Packet
 	doneChan    chan bool
 }
 
 type UDPManagerConfig struct {
 	// The manager writes incoming messages to this channel. Acts as callback mechanism.
-	ReceivingChan chan Message
+	ReceivingChan chan Packet
 
 	// Address to listen on
 	Address string
 }
 
-type Message struct {
+type Packet struct {
 	Data    []byte
 	Address net.UDPAddr
 }
@@ -42,7 +42,7 @@ func NewUDPManager(config UDPManagerConfig) *UDPManager {
 
 	manager := &UDPManager{
 		config:      &config,
-		sendingChan: make(chan Message, SENDING_CHAN_CAP),
+		sendingChan: make(chan Packet, SENDING_CHAN_CAP),
 		doneChan:    make(chan bool),
 	}
 
@@ -96,7 +96,7 @@ func (manager *UDPManager) listenUDP() {
 			return
 		}
 
-		msg := Message{
+		msg := Packet{
 			Data:    buffer[0:n],
 			Address: *addr,
 		}
@@ -111,7 +111,7 @@ func (manager *UDPManager) listenUDP() {
 }
 
 func (manager *UDPManager) sendUDP() {
-	msg := Message{}
+	msg := Packet{}
 
 	for {
 		select {
@@ -132,7 +132,7 @@ func (manager *UDPManager) sendUDP() {
 	}
 }
 
-func (manager *UDPManager) SendMessage(msg Message) {
+func (manager *UDPManager) SendPacket(msg Packet) {
 	manager.sendingChan <- msg
 }
 

@@ -6,7 +6,7 @@ import (
 
 func TestAssertConfigValid_TooShort(t *testing.T) {
 	config := &UDPManagerConfig{
-		ReceivingChan: make(chan Message, MIN_RECEIVING_CHAN_CAP-1),
+		ReceivingChan: make(chan Packet, MIN_RECEIVING_CHAN_CAP-1),
 		Address:       "",
 	}
 
@@ -18,7 +18,7 @@ func TestAssertConfigValid_TooShort(t *testing.T) {
 
 func TestAssertConfigValid_Valid(t *testing.T) {
 	config := &UDPManagerConfig{
-		ReceivingChan: make(chan Message, MIN_RECEIVING_CHAN_CAP),
+		ReceivingChan: make(chan Packet, MIN_RECEIVING_CHAN_CAP),
 		Address:       "",
 	}
 
