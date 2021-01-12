@@ -24,6 +24,9 @@ func createMessageHandler(address string) (chan messages.Message, *MessageHandle
 	return receivingChan, NewMessageHandler(config)
 }
 
+/**
+  * Test sending a game-related message unreliably
+  */
 func TestSendGameMessages_Unreliable(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
@@ -74,8 +77,11 @@ func TestSendGameMessages_Unreliable(t *testing.T) {
 }
 
 // TODO: Test send Non-Game Messages
-// TODO: Test send reliable
 
+/**
+  * Test sending a game message reliably with no response. The message will
+  * be resent multiple times until we reach the retry limit.
+  */
 func TestSendGameMessages_Reliable_NoResponse(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
@@ -107,6 +113,9 @@ func TestSendGameMessages_Reliable_NoResponse(t *testing.T) {
 	handlerA.Stop()
 }
 
+/**
+  * Test sending a game message reliably with a response. It should only be sent once.
+  */
 func TestSendGameMessages_Reliable_Response(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
