@@ -12,16 +12,16 @@ const (
 	RESPONSE_WAIT_TIME = 1000 * time.Millisecond
 )
 
-func createMessageHandler(address string) (chan messages.Message, *MessageHandler) {
+func createMessageRouter(address string) (chan messages.Message, *MessageRouter) {
 	receivingChan := make(chan messages.Message, 10)
-	config := MessageHandlerConfig{
+	config := MessageRouterConfig{
 		MessageReceivingChan:  receivingChan,
 		MaxMessageRetries:     5,
 		MessageRetryTimeoutMs: uint64(500),
 		Address:               address,
 	}
 
-	return receivingChan, NewMessageHandler(config)
+	return receivingChan, NewMessageRouter(config)
 }
 
 /**
@@ -31,8 +31,8 @@ func TestSendGameMessages_Unreliable(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 20
-	_, handlerA := createMessageHandler(clientAAddress)
-	clientBReceivingChan, handlerB := createMessageHandler(clientBAddress)
+	_, handlerA := createMessageRouter(clientAAddress)
+	clientBReceivingChan, handlerB := createMessageRouter(clientBAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
@@ -86,7 +86,7 @@ func TestSendGameMessages_Reliable_NoResponse(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 20
-	_, handlerA := createMessageHandler(clientAAddress)
+	_, handlerA := createMessageRouter(clientAAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
@@ -120,8 +120,8 @@ func TestSendGameMessages_Reliable_Response(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 3
-	_, handlerA := createMessageHandler(clientAAddress)
-	_, handlerB := createMessageHandler(clientBAddress)
+	_, handlerA := createMessageRouter(clientAAddress)
+	_, handlerB := createMessageRouter(clientBAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)

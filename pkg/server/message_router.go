@@ -16,7 +16,7 @@ const (
 	MIN_RECEIVING_CHAN_CAP  = 2
 )
 
-type MessageHandler struct {
+type MessageRouter struct {
 	// Maps client ID to their data
 	clients map[uuid.UUID]*Client
 
@@ -24,7 +24,7 @@ type MessageHandler struct {
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
 	packetCount          int
 	timer                *timer.Timer
-	config               *MessageHandlerConfig
+	config               *MessageRouterConfig
 	udpManager           *conn.UDPManager
 	udpReceivingChan     chan conn.Packet
 	doneChan             chan bool
@@ -38,7 +38,7 @@ type Client struct {
 	lastContactTimeMs uint64
 }
 
-type MessageHandlerConfig struct {
+type MessageRouterConfig struct {
 	// Acts as callback mechanism for decoded messages
 	MessageReceivingChan chan messages.Message
 
@@ -58,7 +58,7 @@ type MessageHandlerConfig struct {
 	HeartbeatActivationMultiplier float64
 }
 
-func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
+func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 	udpReceivingChan := make(chan conn.Packet, UDP_RECEIVING_CHAN_SIZE)
 	err := assertConfigValid(&config)
 	if err != nil {
@@ -70,7 +70,7 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 		Address:       config.Address,
 	}
 
-	handler := &MessageHandler{
+	handler := &MessageRouter{
 		udpManager:       conn.NewUDPManager(udpConfig),
 		udpReceivingChan: udpReceivingChan,
 		doneChan:         make(chan bool),
@@ -88,7 +88,7 @@ func NewMessageHandler(config MessageHandlerConfig) *MessageHandler {
 	return handler
 }
 
-func assertConfigValid(config *MessageHandlerConfig) error {
+func assertConfigValid(config *MessageRouterConfig) error {
 	cap := cap(config.MessageReceivingChan)
 	if cap < MIN_RECEIVING_CHAN_CAP {
 		return fmt.Errorf("Recieving message channel must have capacity %v, got: %v", MIN_RECEIVING_CHAN_CAP, cap)
@@ -97,7 +97,7 @@ func assertConfigValid(config *MessageHandlerConfig) error {
 	return nil
 }
 
-func (handler *MessageHandler) decodeMessages() {
+func (handler *MessageRouter) decodeMessages() {
 	var udpMsg conn.Packet
 
 	for {
@@ -121,7 +121,7 @@ func (handler *MessageHandler) decodeMessages() {
 	}
 }
 
-func (handler *MessageHandler) SendMessageUnreliably(msg messages.Message) {
+func (handler *MessageRouter) SendMessageUnreliably(msg messages.Message) {
 	handler.lock.Lock()
 	defer handler.lock.Unlock()
 	msg.SetResponseRequired(false)
@@ -129,7 +129,7 @@ func (handler *MessageHandler) SendMessageUnreliably(msg messages.Message) {
 	handler.sendMessage(msg)
 }
 
-func (handler *MessageHandler) sendMessage(msg messages.Message) {
+func (handler *MessageRouter) sendMessage(msg messages.Message) {
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)
@@ -149,7 +149,7 @@ func (handler *MessageHandler) sendMessage(msg messages.Message) {
 	handler.packetCount++
 }
 
-func (handler *MessageHandler) SendMessageReliably(msg messages.Message) {
+func (handler *MessageRouter) SendMessageReliably(msg messages.Message) {
 	handler.lock.Lock()
 	defer handler.lock.Unlock()
 	msg.SetResponseRequired(true)
@@ -158,7 +158,7 @@ func (handler *MessageHandler) SendMessageReliably(msg messages.Message) {
 	handler.sendMessage(msg)
 }
 
-func (handler *MessageHandler) createTimerForMessage(msg messages.Message) {
+func (handler *MessageRouter) createTimerForMessage(msg messages.Message) {
 	c := handler.config
 	id := handler.timer.AddRepeatingEvent(handler.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
 	handler.messageRetryEventIDs[msg.GetID()] = id
@@ -167,13 +167,13 @@ func (handler *MessageHandler) createTimerForMessage(msg messages.Message) {
 	}).Debug("Adding timer for message")
 }
 
-func (handler *MessageHandler) onMessageRetry(message interface{}) {
+func (handler *MessageRouter) onMessageRetry(message interface{}) {
 	log.Debug("Resending message")
 	msg := message.(messages.Message)
 	handler.sendMessage(msg)
 }
 
-func (handler *MessageHandler) Stop() {
+func (handler *MessageRouter) Stop() {
 	handler.udpManager.Stop()
 	handler.timer.Stop()
 	close(handler.doneChan)
