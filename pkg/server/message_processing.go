@@ -25,8 +25,8 @@ func (router *MessageRouter) processMessage(msg messages.Message) {
 		router.acknowledgeMessage(msg)
 	}
 
-	associableMsg, isAssociable := msg.(messages.ClientAssociable)
-	if isAssociable {
+	associableMsg, isRoutable := msg.(messages.RoutableMessage)
+	if isRoutable {
 		router.routeMessage(msg, associableMsg.GetClientID())
 	}
 }

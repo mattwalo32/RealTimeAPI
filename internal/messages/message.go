@@ -35,7 +35,7 @@ type Message interface {
 	GetMessageType() int
 }
 
-type ClientAssociable interface {
+type RoutableMessage interface {
 	Message
 	GetClientID() uuid.UUID
 }

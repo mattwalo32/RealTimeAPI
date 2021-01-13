@@ -25,7 +25,7 @@ func createMessageRouter(address string) (*MessageRouter) {
 /**
   * Test sending a game-related message unreliably
   */
-func TestSendAssociableMessages_Unreliable(t *testing.T) {
+func TestSendRoutableMessages_Unreliable(t *testing.T) {
 	numTestMessages := 20
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
@@ -38,9 +38,9 @@ func TestSendAssociableMessages_Unreliable(t *testing.T) {
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
 
-	test_messages := make([]messages.ClientAssociable, numTestMessages)
+	test_messages := make([]messages.RoutableMessage, numTestMessages)
 	for i := 0; i < numTestMessages; i++ {
-		test_messages[i] = messages.RandAssociableMessage()
+		test_messages[i] = messages.RandRoutableMessage()
 		test_messages[i].SetSource(*clientAUDPAddr)
 		test_messages[i].SetDestination(*clientBUDPAddr)
 		routerB.createMockClientInRoom(test_messages[i].GetClientID(), listeningRoom.ID)
@@ -79,8 +79,6 @@ func TestSendAssociableMessages_Unreliable(t *testing.T) {
 	routerB.Stop()
 }
 
-// TODO: Test send Non-Game Messages
-
 /**
   * Test sending a game message reliably with no response. The message will
   * be resent multiple times until we reach the retry limit.
@@ -96,7 +94,7 @@ func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
 
 	test_messages := make([]messages.Message, numTestMessages)
 	for i := 0; i < numTestMessages; i++ {
-		test_messages[i] = messages.RandAssociableMessage()
+		test_messages[i] = messages.RandRoutableMessage()
 		test_messages[i].SetSource(*clientAUDPAddr)
 		test_messages[i].SetDestination(*clientBUDPAddr)
 	}

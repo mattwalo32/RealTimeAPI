@@ -12,10 +12,10 @@ func TestFindRoom_Type(t *testing.T) {
 	}
 }
 
-func TestFindRoom_Associable(t *testing.T) {
+func TestFindRoom_Routable(t *testing.T) {
 	msg := RandRoomMessage()
 
-	func (associableMsg ClientAssociable)() {
+	func (associableMsg RoutableMessage)() {
 		if associableMsg.GetClientID() != msg.ClientID {
 			t.Errorf("Message client ID and associated client ID do not match")
 		}

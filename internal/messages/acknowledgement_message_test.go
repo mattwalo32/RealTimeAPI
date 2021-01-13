@@ -12,10 +12,10 @@ func TestAcknowledge_Type(t *testing.T) {
 	}
 }
 
-func TestAcknowledge_Associable(t *testing.T) {
+func TestAcknowledge_Routable(t *testing.T) {
 	msg := RandAcknowledgeMessage()
 
-	func (associableMsg ClientAssociable)() {
+	func (associableMsg RoutableMessage)() {
 		if associableMsg.GetClientID() != msg.ClientID {
 			t.Errorf("Message client ID and associated client ID do not match")
 		}

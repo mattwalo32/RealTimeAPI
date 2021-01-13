@@ -45,7 +45,7 @@ func RandJoinServerMessage() *AcknowledgementMessage {
 	}
 }
 
-func RandAssociableMessage() ClientAssociable {
+func RandRoutableMessage() RoutableMessage {
 	messageType := rand.Intn(2)
 
 	switch messageType {
