@@ -122,7 +122,7 @@ func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
 func TestSendMessages_Reliable_Response(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
-	numTestMessages := 1
+	numTestMessages := 3
 	routerA := createMessageRouter(clientAAddress)
 	routerB := createMessageRouter(clientBAddress)
 
