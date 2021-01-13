@@ -39,13 +39,16 @@ type RoomConfig struct {
 
 	// All rooms for the same app should have the same app ID
 	ApplicationID uuid.UUID
+
+	// The expected capacity of the room. This is used purely for performance, the capcity can grow or be unutilized
+	InitialCapacity int
 }
 
 func NewRoom(config RoomConfig) *Room {
 	room := &Room{
 		config: config,
 		isRoomOpen: true,
-		clients: make([]*Client),
+		clients: make([]*Client, 0, config.InitialCapacity),
 		ID: uuid.New(),
 	}
 
