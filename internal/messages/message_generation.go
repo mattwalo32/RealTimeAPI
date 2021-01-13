@@ -72,3 +72,16 @@ func RandMessage() Message {
 
 	return RandRoomMessage()
 }
+
+func RandMessageExcluding(messageTypesToExclude []int) Message {
+	OUTER:
+	for msg:=RandMessage();;msg = RandMessage() {
+		for _,msgType := range messageTypesToExclude {
+			if msg.GetMessageType() == msgType {
+				continue OUTER
+			}
+		}
+
+		return msg
+	}
+}

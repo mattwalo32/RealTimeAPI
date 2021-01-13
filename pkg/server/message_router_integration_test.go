@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	RESPONSE_WAIT_TIME = 100 * time.Millisecond
+	RESPONSE_WAIT_TIME = 1000 * time.Millisecond
 )
 
 func createMessageRouter(address string) (*MessageRouter) {
@@ -116,40 +116,40 @@ func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
 	routerA.Stop()
 }
 
-// /**
-//   * Test sending a game message reliably with a response. It should only be sent once.
-//   */
-// func TestSendGameMessages_Reliable_Response(t *testing.T) {
-// 	clientAAddress := "localhost:9999"
-// 	clientBAddress := "localhost:9998"
-// 	numTestMessages := 3
-// 	_, routerA := createMessageRouter(clientAAddress)
-// 	_, routerB := createMessageRouter(clientBAddress)
+/**
+  * Test sending a game message reliably with a response. It should only be sent once.
+  */
+func TestSendMessages_Reliable_Response(t *testing.T) {
+	clientAAddress := "localhost:9999"
+	clientBAddress := "localhost:9998"
+	numTestMessages := 1
+	routerA := createMessageRouter(clientAAddress)
+	routerB := createMessageRouter(clientBAddress)
 
-// 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
-// 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
+	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
+	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
 
-// 	test_messages := make([]messages.Message, numTestMessages)
-// 	for i := 0; i < numTestMessages; i++ {
-// 		test_messages[i] = messages.RandMessage()
-// 		test_messages[i].SetSource(*clientAUDPAddr)
-// 		test_messages[i].SetDestination(*clientBUDPAddr)
-// 	}
+	test_messages := make([]messages.Message, numTestMessages)
+	for i := 0; i < numTestMessages; i++ {
+		test_messages[i] = messages.RandMessageExcluding([]int{messages.MESSAGE_ACKNOWLEDGE})
+		test_messages[i].SetSource(*clientAUDPAddr)
+		test_messages[i].SetDestination(*clientBUDPAddr)
+	}
 
-// 	for _, msg := range test_messages {
-// 		routerA.SendMessageReliably(msg)
-// 	}
+	for _, msg := range test_messages {
+		routerA.SendMessageReliably(msg)
+	}
 
-// 	<-time.After(RESPONSE_WAIT_TIME)
+	<-time.After(RESPONSE_WAIT_TIME)
 
-// 	if len(routerA.messageRetryEventIDs) != 0 {
-// 		t.Errorf("%v event IDs were not deleted", len(routerA.messageRetryEventIDs))
-// 	}
+	if len(routerA.messageRetryEventIDs) != 0 {
+		t.Errorf("%v event IDs were not deleted", len(routerA.messageRetryEventIDs))
+	}
 
-// 	if routerA.timer.NumEvents() != 0 {
-// 		t.Errorf("%v events were not deleted from timer", routerA.timer.NumEvents())
-// 	}
+	if routerA.timer.NumEvents() != 0 {
+		t.Errorf("%v events were not deleted from timer", routerA.timer.NumEvents())
+	}
 
-// 	routerA.Stop()
-// 	routerB.Stop()
-// }
+	routerA.Stop()
+	routerB.Stop()
+}
