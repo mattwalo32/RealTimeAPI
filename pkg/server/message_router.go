@@ -50,9 +50,6 @@ type Client struct {
 }
 
 type MessageRouterConfig struct {
-	// Acts as callback mechanism for decoded messages
-	MessageReceivingChan chan messages.Message
-
 	// Passed to UDPManager
 	Address string
 
@@ -71,10 +68,6 @@ type MessageRouterConfig struct {
 
 func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 	udpReceivingChan := make(chan conn.Packet, UDP_RECEIVING_CHAN_SIZE)
-	err := assertConfigValid(&config)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	udpConfig := conn.UDPManagerConfig{
 		ReceivingChan: udpReceivingChan,
@@ -97,15 +90,6 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 
 	go handler.decodeMessages()
 	return handler
-}
-
-func assertConfigValid(config *MessageRouterConfig) error {
-	cap := cap(config.MessageReceivingChan)
-	if cap < MIN_RECEIVING_CHAN_CAP {
-		return fmt.Errorf("Recieving message channel must have capacity %v, got: %v", MIN_RECEIVING_CHAN_CAP, cap)
-	}
-
-	return nil
 }
 
 func (handler *MessageRouter) decodeMessages() {

@@ -15,7 +15,6 @@ const (
 func createMessageRouter(address string) (chan messages.Message, *MessageRouter) {
 	receivingChan := make(chan messages.Message, 10)
 	config := MessageRouterConfig{
-		MessageReceivingChan:  receivingChan,
 		MaxMessageRetries:     5,
 		MessageRetryTimeoutMs: uint64(500),
 		Address:               address,

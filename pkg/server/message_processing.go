@@ -13,7 +13,6 @@ func (handler *MessageRouter) processMessage(msg messages.Message) {
 	case messages.MESSAGE_JOIN_SERVER:
 		handler.processJoinServer(msg.(*messages.JoinServerMessage))
 	default:
-		handler.config.MessageReceivingChan <- msg
 	}
 
 	// TODO: Don't allow acknowledgement messages to get acknowledged
