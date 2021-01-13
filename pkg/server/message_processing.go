@@ -25,9 +25,9 @@ func (router *MessageRouter) processMessage(msg messages.Message) {
 		router.acknowledgeMessage(msg)
 	}
 
-	associableMsg, isRoutable := msg.(messages.RoutableMessage)
+	routableMsg, isRoutable := msg.(messages.RoutableMessage)
 	if isRoutable {
-		router.routeMessage(msg, associableMsg.GetClientID())
+		router.routeMessage(msg, routableMsg.GetClientID())
 	}
 }
 
