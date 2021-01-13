@@ -12,6 +12,16 @@ func TestAcknowledge_Type(t *testing.T) {
 	}
 }
 
+func TestAcknowledge_Associable(t *testing.T) {
+	msg := RandAcknowledgeMessage()
+
+	func (associableMsg ClientAssociable)() {
+		if associableMsg.GetClientID() != msg.ClientID {
+			t.Errorf("Message client ID and associated client ID do not match")
+		}
+	}(msg)
+}
+
 func TestAcknowledge_EncodeDecode(t *testing.T) {
 	msg := RandAcknowledgeMessage()
 
@@ -45,5 +55,9 @@ func TestAcknowledge_EncodeDecode(t *testing.T) {
 
 	if msg.AcknowledgedMessageID != decodedMsg.AcknowledgedMessageID {
 		t.Error("Acknowledged Message IDs do not match")
+	}
+
+	if msg.ClientID != decodedMsg.ClientID {
+		t.Error("Client IDs do not match")
 	}
 }

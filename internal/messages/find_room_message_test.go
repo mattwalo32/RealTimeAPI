@@ -12,6 +12,16 @@ func TestFindRoom_Type(t *testing.T) {
 	}
 }
 
+func TestFindRoom_Associable(t *testing.T) {
+	msg := RandRoomMessage()
+
+	func (associableMsg ClientAssociable)() {
+		if associableMsg.GetClientID() != msg.ClientID {
+			t.Errorf("Message client ID and associated client ID do not match")
+		}
+	}(msg)
+}
+
 func TestFindRoom_EncodeDecode(t *testing.T) {
 	msg := RandRoomMessage()
 
@@ -45,6 +55,10 @@ func TestFindRoom_EncodeDecode(t *testing.T) {
 
 	if msg.UserID != decodedMsg.UserID {
 		t.Error("UserIDs do not match")
+	}
+
+	if msg.ClientID != decodedMsg.ClientID {
+		t.Error("ClientIDs do not match")
 	}
 
 	if msg.ShouldStartWhenFull != decodedMsg.ShouldStartWhenFull {

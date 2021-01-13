@@ -71,6 +71,6 @@ func (msg *AcknowledgementMessage) GetMessageType() int {
 	return MESSAGE_ACKNOWLEDGE
 }
 
-func (msg *AcknowledgedMessage) GetClientID() uuid.UUID {
+func (msg *AcknowledgementMessage) GetClientID() uuid.UUID {
 	return msg.ClientID
 }
