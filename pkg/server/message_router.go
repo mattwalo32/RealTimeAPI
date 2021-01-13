@@ -20,6 +20,9 @@ type MessageRouter struct {
 	// Maps client ID to client data
 	clients map[uuid.UUID]*Client
 
+	// Maps room ID to room struct
+	rooms map[uuid.UUID]*Room
+
 	// Maps messageID to outstanding message retry event IDs
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
 
@@ -79,6 +82,7 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 		udpReceivingChan: udpReceivingChan,
 		doneChan:         make(chan bool),
 		clients: make(map[uuid.UUID]*Client),
+		rooms: make(map[uuid.UUID]*Room),
 		messageRetryEventIDs: make(map[uuid.UUID]uuid.UUID),
 		timer:            timer.NewTimer(),
 		config:           &config,
