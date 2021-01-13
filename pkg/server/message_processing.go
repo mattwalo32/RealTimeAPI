@@ -61,5 +61,25 @@ func (router *MessageRouter) acknowledgeMessage(msg messages.Message) {
 }
 
 func (router *MessageRouter) routeMessage(msg messages.Message, clientID uuid.UUID) {
-	// TODO: Route to the client's room
+	routerLogger := log.WithFields(log.Fields{
+		"ClientID": clientID,
+		"Message": msg,
+	})
+
+	client, doesClientExist := router.clients[clientID]
+	if !doesClientExist {
+		routerLogger.Warn("Attempted to route message to non-existent client")
+		return
+	}
+
+	roomID := client.RoomID
+	room, doesRoomExist := router.rooms[roomID]
+	if !doesRoomExist {
+		routerLogger.WithFields(log.Fields{
+			"RoomID": roomID,
+		}).Warn("Attmpted to route message to non-existent room")
+		return
+	}
+
+	room.config.EventHandler.OnMessageRecieved(msg)
 }
