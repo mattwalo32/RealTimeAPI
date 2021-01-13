@@ -5,12 +5,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type messageQueue struct {
+type messageQueueHandler struct {
 	messages []messages.Message
 }
 
-func createMockRoom() *Room {
-	evtHandler := &messageQueue{}
+func newMockRoom() *Room {
+	evtHandler := &messageQueueHandler{}
 
 	config := RoomConfig{
 		EventHandler: evtHandler,
@@ -22,15 +22,15 @@ func createMockRoom() *Room {
 	return NewRoom(config)
 }
 
-func (queue *messageQueue) OnClientConnected(client Client) {}
+func (queue *messageQueueHandler) OnClientConnected(client Client) {}
 
-func (queue *messageQueue) OnClientDisconnected(client Client) {}
+func (queue *messageQueueHandler) OnClientDisconnected(client Client) {}
 
-func (queue *messageQueue) OnMessageRecieved(msg messages.Message) {
+func (queue *messageQueueHandler) OnMessageRecieved(msg messages.Message) {
 	queue.messages = append(queue.messages, msg)
 }
 
-func (queue *messageQueue) DequeueMessage() messages.Message {
+func (queue *messageQueueHandler) DequeueMessage() messages.Message {
 	queueLen := len(queue.messages)
 	if queueLen < 1 {
 		return nil

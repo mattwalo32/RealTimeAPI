@@ -36,6 +36,7 @@ type Message interface {
 }
 
 type ClientAssociable interface {
+	Message
 	GetClientID() uuid.UUID
 }
 

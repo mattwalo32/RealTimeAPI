@@ -45,12 +45,14 @@ func RandJoinServerMessage() *AcknowledgementMessage {
 	}
 }
 
-func RandGameMessage() Message {
-	messageType := rand.Intn(1)
+func RandAssociableMessage() ClientAssociable {
+	messageType := rand.Intn(2)
 
 	switch messageType {
 	case 0:
 		return RandRoomMessage()
+	case 1:
+		return RandAcknowledgeMessage()
 	}
 
 	return RandRoomMessage()
