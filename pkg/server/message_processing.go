@@ -12,7 +12,13 @@ func (router *MessageRouter) processMessage(msg messages.Message) {
 		router.processAcknowledge(msg.(*messages.AcknowledgementMessage))
 	case messages.MESSAGE_JOIN_SERVER:
 		router.processJoinServer(msg.(*messages.JoinServerMessage))
+	case messages.MESSAGE_FIND_ROOM:
+		// TODO: Process this message
 	default:
+		log.WithFields(log.Fields{
+			"messageType": msg.GetMessageType(),
+		}).Warn("Router got unkown message type")
+		return
 	}
 
 	// TODO: Don't allow acknowledgement messages to get acknowledged
