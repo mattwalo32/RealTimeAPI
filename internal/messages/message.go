@@ -35,6 +35,10 @@ type Message interface {
 	GetMessageType() int
 }
 
+type ClientAssociable interface {
+	GetClientID() uuid.UUID
+}
+
 type encodedMessage struct {
 	MessageType int
 	Data        []byte

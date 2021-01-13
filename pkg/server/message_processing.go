@@ -21,9 +21,13 @@ func (router *MessageRouter) processMessage(msg messages.Message) {
 		return
 	}
 
-	// TODO: Don't allow acknowledgement messages to get acknowledged
-	if msg.IsResponseRequired() {
+	if messages.DoesMessageRequireResponse(msg) {
 		router.acknowledgeMessage(msg)
+	}
+
+	associableMsg, isAssociable := msg.(messages.ClientAssociable)
+	if isAssociable {
+		router.routeMessage(msg, associableMsg.GetClientID())
 	}
 }
 
@@ -54,4 +58,8 @@ func (router *MessageRouter) acknowledgeMessage(msg messages.Message) {
 	}
 
 	router.SendMessageUnreliably(ackMessage)
+}
+
+func (router *MessageRouter) routeMessage(msg messages.Message, clientID uuid.UUID) {
+	// TODO: Route to the client's room
 }

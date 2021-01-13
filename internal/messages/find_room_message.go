@@ -13,8 +13,9 @@ type FindRoomMessage struct {
 	MessageID        uuid.UUID
 	PacketNumber     int
 	ResponseRequired bool
-
+	
 	UserID              uuid.UUID
+	ClientID uuid.UUID
 	ShouldStartWhenFull bool
 	MinPlayers          int
 	MaxPlayers          int
@@ -71,4 +72,8 @@ func (msg *FindRoomMessage) GetDestination() net.UDPAddr {
 
 func (msg *FindRoomMessage) GetMessageType() int {
 	return MESSAGE_FIND_ROOM
+}
+
+func (msg *FindRoomMessage) GetClientID() uuid.UUID {
+	return msg.ClientID
 }

@@ -14,6 +14,7 @@ type AcknowledgementMessage struct {
 	PacketNumber     int
 	ResponseRequired bool
 
+	ClientID uuid.UUID
 	AcknowledgedMessageID uuid.UUID
 }
 
@@ -68,4 +69,8 @@ func (msg *AcknowledgementMessage) GetDestination() net.UDPAddr {
 
 func (msg *AcknowledgementMessage) GetMessageType() int {
 	return MESSAGE_ACKNOWLEDGE
+}
+
+func (msg *AcknowledgedMessage) GetClientID() uuid.UUID {
+	return msg.ClientID
 }
