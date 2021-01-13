@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/mattwalo32/RealTimeAPI/internal/conn"
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
