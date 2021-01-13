@@ -96,6 +96,15 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 	return router
 }
 
+func (router *MessageRouter) RegisterRoom(room *Room) {
+	if room == nil {
+		log.Warn("Attempted to register nil room")
+		return
+	}
+
+	router.rooms[room.ID] = room
+}
+
 func (router *MessageRouter) decodeMessages() {
 	var udpMsg conn.Packet
 
