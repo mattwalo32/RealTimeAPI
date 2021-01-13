@@ -48,6 +48,7 @@ type MessageRouter struct {
 type Client struct {
 	Address     net.UDPAddr
 	ID          uuid.UUID
+	RoomID      uuid.UUID
 	AppData     string
 	lastContactTimeMs uint64
 }
