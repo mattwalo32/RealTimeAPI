@@ -39,7 +39,9 @@ func (queue *messageQueueHandler) DequeueMessage() messages.Message {
 	msg := queue.messages[0]
 
 	if queueLen > 1 {
-		copy(queue.messages[1:], queue.messages[0:queueLen-1])
+		queue.messages = queue.messages[1:]
+	} else {
+		queue.messages = []messages.Message{}
 	}
 
 	return msg
