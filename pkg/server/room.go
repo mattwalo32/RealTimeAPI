@@ -24,6 +24,9 @@ type Room struct {
 	// If a room is open, players will be put into it
 	isRoomOpen bool
 
+	// List of all clients in room 
+	clients []*Client
+
 	ID uuid.UUID
 }
 
@@ -42,6 +45,7 @@ func NewRoom(config RoomConfig) *Room {
 	room := &Room{
 		config: config,
 		isRoomOpen: true,
+		clients: make([]*Client),
 		ID: uuid.New(),
 	}
 

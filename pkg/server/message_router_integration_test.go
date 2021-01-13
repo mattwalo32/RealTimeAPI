@@ -30,8 +30,8 @@ func TestSendGameMessages_Unreliable(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 20
-	_, handlerA := createMessageRouter(clientAAddress)
-	clientBReceivingChan, handlerB := createMessageRouter(clientBAddress)
+	_, routerA := createMessageRouter(clientAAddress)
+	clientBReceivingChan, routerB := createMessageRouter(clientBAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
@@ -44,7 +44,7 @@ func TestSendGameMessages_Unreliable(t *testing.T) {
 	}
 
 	for packetNum, msg := range test_messages {
-		handlerA.SendMessageUnreliably(msg)
+		routerA.SendMessageUnreliably(msg)
 		response := <-clientBReceivingChan
 
 		if response.GetMessageType() != msg.GetMessageType() {
@@ -71,8 +71,8 @@ func TestSendGameMessages_Unreliable(t *testing.T) {
 		}
 	}
 
-	handlerA.Stop()
-	handlerB.Stop()
+	routerA.Stop()
+	routerB.Stop()
 }
 
 // TODO: Test send Non-Game Messages
@@ -85,7 +85,7 @@ func TestSendGameMessages_Reliable_NoResponse(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 20
-	_, handlerA := createMessageRouter(clientAAddress)
+	_, routerA := createMessageRouter(clientAAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
@@ -98,18 +98,18 @@ func TestSendGameMessages_Reliable_NoResponse(t *testing.T) {
 	}
 
 	for _, msg := range test_messages {
-		handlerA.SendMessageReliably(msg)
+		routerA.SendMessageReliably(msg)
 	}
 
-	if len(handlerA.messageRetryEventIDs) != numTestMessages {
+	if len(routerA.messageRetryEventIDs) != numTestMessages {
 		t.Errorf("Expected %v retry event IDs", numTestMessages)
 	}
 
-	if handlerA.timer.NumEvents() != numTestMessages {
+	if routerA.timer.NumEvents() != numTestMessages {
 		t.Errorf("Expected %v timer events", numTestMessages)
 	}
 
-	handlerA.Stop()
+	routerA.Stop()
 }
 
 /**
@@ -119,8 +119,8 @@ func TestSendGameMessages_Reliable_Response(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 3
-	_, handlerA := createMessageRouter(clientAAddress)
-	_, handlerB := createMessageRouter(clientBAddress)
+	_, routerA := createMessageRouter(clientAAddress)
+	_, routerB := createMessageRouter(clientBAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
@@ -133,19 +133,19 @@ func TestSendGameMessages_Reliable_Response(t *testing.T) {
 	}
 
 	for _, msg := range test_messages {
-		handlerA.SendMessageReliably(msg)
+		routerA.SendMessageReliably(msg)
 	}
 
 	<-time.After(RESPONSE_WAIT_TIME)
 
-	if len(handlerA.messageRetryEventIDs) != 0 {
-		t.Errorf("%v event IDs were not deleted", len(handlerA.messageRetryEventIDs))
+	if len(routerA.messageRetryEventIDs) != 0 {
+		t.Errorf("%v event IDs were not deleted", len(routerA.messageRetryEventIDs))
 	}
 
-	if handlerA.timer.NumEvents() != 0 {
-		t.Errorf("%v events were not deleted from timer", handlerA.timer.NumEvents())
+	if routerA.timer.NumEvents() != 0 {
+		t.Errorf("%v events were not deleted from timer", routerA.timer.NumEvents())
 	}
 
-	handlerA.Stop()
-	handlerB.Stop()
+	routerA.Stop()
+	routerB.Stop()
 }

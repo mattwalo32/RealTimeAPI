@@ -77,7 +77,7 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 		Address:       config.Address,
 	}
 
-	handler := &MessageRouter{
+	router := &MessageRouter{
 		udpManager:       conn.NewUDPManager(udpConfig),
 		udpReceivingChan: udpReceivingChan,
 		doneChan:         make(chan bool),
@@ -92,18 +92,18 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 	// Remove this later. Only for debugging
 	log.SetLevel(log.DebugLevel)
 
-	go handler.decodeMessages()
-	return handler
+	go router.decodeMessages()
+	return router
 }
 
-func (handler *MessageRouter) decodeMessages() {
+func (router *MessageRouter) decodeMessages() {
 	var udpMsg conn.Packet
 
 	for {
 		select {
-		case <-handler.doneChan:
+		case <-router.doneChan:
 			return
-		case udpMsg = <-handler.udpReceivingChan:
+		case udpMsg = <-router.udpReceivingChan:
 		}
 
 		message, err := messages.DecodeFromHeader(udpMsg.Data)
@@ -116,19 +116,19 @@ func (handler *MessageRouter) decodeMessages() {
 			"Type": message.GetMessageType(),
 		}).Debug("Decoded Message")
 		message.SetSource(udpMsg.Address)
-		handler.processMessage(message)
+		router.processMessage(message)
 	}
 }
 
-func (handler *MessageRouter) SendMessageUnreliably(msg messages.Message) {
-	handler.lock.Lock()
-	defer handler.lock.Unlock()
+func (router *MessageRouter) SendMessageUnreliably(msg messages.Message) {
+	router.lock.Lock()
+	defer router.lock.Unlock()
 	msg.SetResponseRequired(false)
-	msg.SetPacketNumber(handler.packetCount)
-	handler.sendMessage(msg)
+	msg.SetPacketNumber(router.packetCount)
+	router.sendMessage(msg)
 }
 
-func (handler *MessageRouter) sendMessage(msg messages.Message) {
+func (router *MessageRouter) sendMessage(msg messages.Message) {
 	data, err := messages.EncodeWithHeader(msg)
 	if err != nil {
 		log.Warn(err)
@@ -144,36 +144,36 @@ func (handler *MessageRouter) sendMessage(msg messages.Message) {
 		"Type": msg.GetMessageType(),
 		"Destination": msg.GetDestination(),
 	}).Debug("Sending Message")
-	handler.udpManager.SendPacket(udpMsg)
-	handler.packetCount++
+	router.udpManager.SendPacket(udpMsg)
+	router.packetCount++
 }
 
-func (handler *MessageRouter) SendMessageReliably(msg messages.Message) {
-	handler.lock.Lock()
-	defer handler.lock.Unlock()
+func (router *MessageRouter) SendMessageReliably(msg messages.Message) {
+	router.lock.Lock()
+	defer router.lock.Unlock()
 	msg.SetResponseRequired(true)
-	msg.SetPacketNumber(handler.packetCount)
-	handler.createTimerForMessage(msg)
-	handler.sendMessage(msg)
+	msg.SetPacketNumber(router.packetCount)
+	router.createTimerForMessage(msg)
+	router.sendMessage(msg)
 }
 
-func (handler *MessageRouter) createTimerForMessage(msg messages.Message) {
-	c := handler.config
-	id := handler.timer.AddRepeatingEvent(handler.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
-	handler.messageRetryEventIDs[msg.GetID()] = id
+func (router *MessageRouter) createTimerForMessage(msg messages.Message) {
+	c := router.config
+	id := router.timer.AddRepeatingEvent(router.onMessageRetry, msg, c.MessageRetryTimeoutMs, c.MaxMessageRetries)
+	router.messageRetryEventIDs[msg.GetID()] = id
 	log.WithFields(log.Fields{
 		"ID": msg.GetID(),
 	}).Debug("Adding timer for message")
 }
 
-func (handler *MessageRouter) onMessageRetry(message interface{}) {
+func (router *MessageRouter) onMessageRetry(message interface{}) {
 	log.Debug("Resending message")
 	msg := message.(messages.Message)
-	handler.sendMessage(msg)
+	router.sendMessage(msg)
 }
 
-func (handler *MessageRouter) Stop() {
-	handler.udpManager.Stop()
-	handler.timer.Stop()
-	close(handler.doneChan)
+func (router *MessageRouter) Stop() {
+	router.udpManager.Stop()
+	router.timer.Stop()
+	close(router.doneChan)
 }
