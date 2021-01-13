@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	RESPONSE_WAIT_TIME = 1000 * time.Millisecond
+	RESPONSE_WAIT_TIME = 100 * time.Millisecond
 )
 
 func createMessageRouter(address string) (*MessageRouter) {
@@ -85,36 +85,36 @@ func TestSendAssociableMessages_Unreliable(t *testing.T) {
   * Test sending a game message reliably with no response. The message will
   * be resent multiple times until we reach the retry limit.
   */
-// func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
-// 	clientAAddress := "localhost:9999"
-// 	clientBAddress := "localhost:9998"
-// 	numTestMessages := 20
-// 	_, routerA := createMessageRouter(clientAAddress)
+func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
+	clientAAddress := "localhost:9999"
+	clientBAddress := "localhost:9998"
+	numTestMessages := 20
+	routerA := createMessageRouter(clientAAddress)
 
-// 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
-// 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
+	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
+	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)
 
-// 	test_messages := make([]messages.Message, numTestMessages)
-// 	for i := 0; i < numTestMessages; i++ {
-// 		test_messages[i] = messages.RandGameMessage()
-// 		test_messages[i].SetSource(*clientAUDPAddr)
-// 		test_messages[i].SetDestination(*clientBUDPAddr)
-// 	}
+	test_messages := make([]messages.Message, numTestMessages)
+	for i := 0; i < numTestMessages; i++ {
+		test_messages[i] = messages.RandAssociableMessage()
+		test_messages[i].SetSource(*clientAUDPAddr)
+		test_messages[i].SetDestination(*clientBUDPAddr)
+	}
 
-// 	for _, msg := range test_messages {
-// 		routerA.SendMessageReliably(msg)
-// 	}
+	for _, msg := range test_messages {
+		routerA.SendMessageReliably(msg)
+	}
 
-// 	if len(routerA.messageRetryEventIDs) != numTestMessages {
-// 		t.Errorf("Expected %v retry event IDs", numTestMessages)
-// 	}
+	if len(routerA.messageRetryEventIDs) != numTestMessages {
+		t.Errorf("Expected %v retry event IDs", numTestMessages)
+	}
 
-// 	if routerA.timer.NumEvents() != numTestMessages {
-// 		t.Errorf("Expected %v timer events", numTestMessages)
-// 	}
+	if routerA.timer.NumEvents() != numTestMessages {
+		t.Errorf("Expected %v timer events", numTestMessages)
+	}
 
-// 	routerA.Stop()
-// }
+	routerA.Stop()
+}
 
 // /**
 //   * Test sending a game message reliably with a response. It should only be sent once.
