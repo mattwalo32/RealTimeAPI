@@ -96,8 +96,11 @@ func (manager *UDPManager) listenUDP() {
 			return
 		}
 
+		bufferCopy := make([]byte, n)
+		copy(bufferCopy, buffer[0:n])
+
 		msg := Packet{
-			Data:    buffer[0:n],
+			Data:    bufferCopy,
 			Address: *addr,
 		}
 
