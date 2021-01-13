@@ -17,16 +17,27 @@ const (
 )
 
 type MessageRouter struct {
-	// Maps client ID to their data
+	// Maps client ID to client data
 	clients map[uuid.UUID]*Client
 
 	// Maps messageID to outstanding message retry event IDs
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
+
+	// The current packet count. Used to sequentially number packets.
 	packetCount          int
+
+	// Timer object used for resending messages
 	timer                *timer.Timer
+
+	// Config passed in constructor
 	config               *MessageRouterConfig
+
+	// Used to send packets over UDP
 	udpManager           *conn.UDPManager
+
+	// Packets are written to this channel by the UDPManager
 	udpReceivingChan     chan conn.Packet
+
 	doneChan             chan bool
 	lock sync.Mutex
 }
