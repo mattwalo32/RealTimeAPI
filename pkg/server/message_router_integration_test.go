@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	RESPONSE_WAIT_TIME = 1000 * time.Millisecond
+	RESPONSE_WAIT_TIME = 100 * time.Millisecond
 )
 
 func createMessageRouter(address string) (*MessageRouter) {
