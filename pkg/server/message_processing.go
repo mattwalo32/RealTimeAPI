@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	"github.com/google/uuid"
+	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -51,9 +51,9 @@ func (router *MessageRouter) removeMessageTimer(msg *messages.AcknowledgementMes
 
 func (router *MessageRouter) acknowledgeMessage(msg messages.Message) {
 	ackMessage := &messages.AcknowledgementMessage{
-		SourceAddr: *router.udpManager.GetUDPAddr(),
-		DestAddr: msg.GetSource(),
-		MessageID: uuid.New(),
+		SourceAddr:            *router.udpManager.GetUDPAddr(),
+		DestAddr:              msg.GetSource(),
+		MessageID:             uuid.New(),
 		AcknowledgedMessageID: msg.GetID(),
 	}
 
@@ -63,7 +63,7 @@ func (router *MessageRouter) acknowledgeMessage(msg messages.Message) {
 func (router *MessageRouter) routeMessage(msg messages.Message, clientID uuid.UUID) {
 	routerLogger := log.WithFields(log.Fields{
 		"ClientID": clientID,
-		"Message": msg,
+		"Message":  msg,
 	})
 
 	client, doesClientExist := router.clients[clientID]

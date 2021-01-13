@@ -15,7 +15,7 @@ func TestAcknowledge_Type(t *testing.T) {
 func TestAcknowledge_Routable(t *testing.T) {
 	msg := RandAcknowledgeMessage()
 
-	func (routableMsg RoutableMessage)() {
+	func(routableMsg RoutableMessage) {
 		if routableMsg.GetClientID() != msg.ClientID {
 			t.Errorf("Message client ID and associated client ID do not match")
 		}

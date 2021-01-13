@@ -15,7 +15,7 @@ const (
 type UDPManager struct {
 	config *UDPManagerConfig
 	conn   *net.UDPConn
-	addr *net.UDPAddr
+	addr   *net.UDPAddr
 
 	sendingChan chan Packet
 	doneChan    chan bool
@@ -105,7 +105,7 @@ func (manager *UDPManager) listenUDP() {
 		}
 
 		log.WithFields(log.Fields{
-			"Data": msg.Data,
+			"Data":    msg.Data,
 			"Address": msg.Address,
 		}).Trace("Received message via UDP")
 
@@ -124,7 +124,7 @@ func (manager *UDPManager) sendUDP() {
 		}
 
 		log.WithFields(log.Fields{
-			"Data": msg.Data,
+			"Data":    msg.Data,
 			"Address": msg.Address,
 		}).Trace("Sending message via UDP")
 

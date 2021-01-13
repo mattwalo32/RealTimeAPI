@@ -12,7 +12,7 @@ const (
 	RESPONSE_WAIT_TIME = 100 * time.Millisecond
 )
 
-func createMessageRouter(address string) (*MessageRouter) {
+func createMessageRouter(address string) *MessageRouter {
 	config := MessageRouterConfig{
 		MaxMessageRetries:     5,
 		MessageRetryTimeoutMs: uint64(500),
@@ -23,8 +23,8 @@ func createMessageRouter(address string) (*MessageRouter) {
 }
 
 /**
-  * Test sending a game-related message unreliably
-  */
+ * Test sending a game-related message unreliably
+ */
 func TestSendRoutableMessages_Unreliable(t *testing.T) {
 	numTestMessages := 20
 	clientAAddress := "localhost:9999"
@@ -80,9 +80,9 @@ func TestSendRoutableMessages_Unreliable(t *testing.T) {
 }
 
 /**
-  * Test sending a game message reliably with no response. The message will
-  * be resent multiple times until we reach the retry limit.
-  */
+ * Test sending a game message reliably with no response. The message will
+ * be resent multiple times until we reach the retry limit.
+ */
 func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
@@ -115,8 +115,8 @@ func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
 }
 
 /**
-  * Test sending a game message reliably with a response. It should only be sent once.
-  */
+ * Test sending a game message reliably with a response. It should only be sent once.
+ */
 func TestSendMessages_Reliable_Response(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"

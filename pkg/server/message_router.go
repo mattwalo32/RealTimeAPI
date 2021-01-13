@@ -6,8 +6,8 @@ import (
 	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	"github.com/mattwalo32/RealTimeAPI/internal/timer"
 	log "github.com/sirupsen/logrus"
-	"sync"
 	"net"
+	"sync"
 )
 
 const (
@@ -26,29 +26,29 @@ type MessageRouter struct {
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
 
 	// The current packet count. Used to sequentially number packets.
-	packetCount          int
+	packetCount int
 
 	// Timer object used for resending messages
-	timer                *timer.Timer
+	timer *timer.Timer
 
 	// Config passed in constructor
-	config               *MessageRouterConfig
+	config *MessageRouterConfig
 
 	// Used to send packets over UDP
-	udpManager           *conn.UDPManager
+	udpManager *conn.UDPManager
 
 	// Packets are written to this channel by the UDPManager
-	udpReceivingChan     chan conn.Packet
+	udpReceivingChan chan conn.Packet
 
-	doneChan             chan bool
-	lock sync.Mutex
+	doneChan chan bool
+	lock     sync.Mutex
 }
 
 type Client struct {
-	Address     net.UDPAddr
-	ID          uuid.UUID
-	RoomID      uuid.UUID
-	AppData     string
+	Address           net.UDPAddr
+	ID                uuid.UUID
+	RoomID            uuid.UUID
+	AppData           string
 	lastContactTimeMs uint64
 }
 
@@ -78,15 +78,15 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 	}
 
 	router := &MessageRouter{
-		udpManager:       conn.NewUDPManager(udpConfig),
-		udpReceivingChan: udpReceivingChan,
-		doneChan:         make(chan bool),
-		clients: make(map[uuid.UUID]*Client),
-		rooms: make(map[uuid.UUID]*Room),
+		udpManager:           conn.NewUDPManager(udpConfig),
+		udpReceivingChan:     udpReceivingChan,
+		doneChan:             make(chan bool),
+		clients:              make(map[uuid.UUID]*Client),
+		rooms:                make(map[uuid.UUID]*Room),
 		messageRetryEventIDs: make(map[uuid.UUID]uuid.UUID),
-		timer:            timer.NewTimer(),
-		config:           &config,
-		packetCount:      0,
+		timer:                timer.NewTimer(),
+		config:               &config,
+		packetCount:          0,
 	}
 
 	// Remove this later. Only for debugging
@@ -150,7 +150,7 @@ func (router *MessageRouter) sendMessage(msg messages.Message) {
 	}
 
 	log.WithFields(log.Fields{
-		"Type": msg.GetMessageType(),
+		"Type":        msg.GetMessageType(),
 		"Destination": msg.GetDestination(),
 	}).Debug("Sending Message")
 	router.udpManager.SendPacket(udpMsg)

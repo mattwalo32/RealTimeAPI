@@ -1,8 +1,8 @@
-package server;
+package server
 
 import (
-	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	"github.com/google/uuid"
+	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 )
 
 type RoomEventHandler interface {
@@ -24,7 +24,7 @@ type Room struct {
 	// If a room is open, players will be put into it
 	isRoomOpen bool
 
-	// List of all clients in room 
+	// List of all clients in room
 	clients []*Client
 
 	ID uuid.UUID
@@ -46,10 +46,10 @@ type RoomConfig struct {
 
 func NewRoom(config RoomConfig) *Room {
 	room := &Room{
-		config: config,
+		config:     config,
 		isRoomOpen: true,
-		clients: make([]*Client, 0, config.InitialCapacity),
-		ID: uuid.New(),
+		clients:    make([]*Client, 0, config.InitialCapacity),
+		ID:         uuid.New(),
 	}
 
 	return room

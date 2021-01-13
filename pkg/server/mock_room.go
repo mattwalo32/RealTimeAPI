@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 	"github.com/google/uuid"
+	"github.com/mattwalo32/RealTimeAPI/internal/messages"
 )
 
 type messageQueueHandler struct {
@@ -13,10 +13,10 @@ func newMockRoom() *Room {
 	evtHandler := &messageQueueHandler{}
 
 	config := RoomConfig{
-		EventHandler: evtHandler,
+		EventHandler:                 evtHandler,
 		ShouldReceiveVerboseMessages: true,
-		ApplicationID: uuid.New(),
-		InitialCapacity: 10,
+		ApplicationID:                uuid.New(),
+		InitialCapacity:              10,
 	}
 
 	return NewRoom(config)

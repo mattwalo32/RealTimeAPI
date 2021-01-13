@@ -5,12 +5,12 @@ import (
 )
 
 /**
-  * Creates a fake client with the given ID and assigns it the given room ID.
-  * For testing only
-  **/
+ * Creates a fake client with the given ID and assigns it the given room ID.
+ * For testing only
+ **/
 func (router *MessageRouter) createMockClientInRoom(clientID uuid.UUID, roomID uuid.UUID) {
 	mockClient := &Client{
-		ID: clientID,
+		ID:     clientID,
 		RoomID: roomID,
 	}
 

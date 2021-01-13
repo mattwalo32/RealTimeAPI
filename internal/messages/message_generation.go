@@ -15,7 +15,7 @@ func RandRoomMessage() *FindRoomMessage {
 		ResponseRequired: util.RandBool(),
 
 		UserID:              uuid.New(),
-		ClientID: uuid.New(),
+		ClientID:            uuid.New(),
 		ShouldStartWhenFull: util.RandBool(),
 		MinPlayers:          rand.Int(),
 		MaxPlayers:          rand.Int(),
@@ -39,7 +39,7 @@ func RandJoinServerMessage() *AcknowledgementMessage {
 		SourceAddr:       util.RandUDPAddr(),
 		DestAddr:         util.RandUDPAddr(),
 		MessageID:        uuid.New(),
-		ClientID: uuid.New(),
+		ClientID:         uuid.New(),
 		PacketNumber:     rand.Int(),
 		ResponseRequired: util.RandBool(),
 	}
@@ -74,9 +74,9 @@ func RandMessage() Message {
 }
 
 func RandMessageExcluding(messageTypesToExclude []int) Message {
-	OUTER:
-	for msg:=RandMessage();;msg = RandMessage() {
-		for _,msgType := range messageTypesToExclude {
+OUTER:
+	for msg := RandMessage(); ; msg = RandMessage() {
+		for _, msgType := range messageTypesToExclude {
 			if msg.GetMessageType() == msgType {
 				continue OUTER
 			}

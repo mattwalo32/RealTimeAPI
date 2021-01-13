@@ -13,9 +13,9 @@ type FindRoomMessage struct {
 	MessageID        uuid.UUID
 	PacketNumber     int
 	ResponseRequired bool
-	
+
 	UserID              uuid.UUID
-	ClientID uuid.UUID
+	ClientID            uuid.UUID
 	ShouldStartWhenFull bool
 	MinPlayers          int
 	MaxPlayers          int
