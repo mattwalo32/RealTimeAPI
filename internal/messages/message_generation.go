@@ -34,14 +34,16 @@ func RandAcknowledgeMessage() *AcknowledgementMessage {
 	}
 }
 
-func RandJoinServerMessage() *AcknowledgementMessage {
-	return &AcknowledgementMessage{
+func RandJoinServerMessage() *JoinServerMessage {
+	return &JoinServerMessage{
 		SourceAddr:       util.RandUDPAddr(),
 		DestAddr:         util.RandUDPAddr(),
 		MessageID:        uuid.New(),
-		ClientID:         uuid.New(),
 		PacketNumber:     rand.Int(),
 		ResponseRequired: util.RandBool(),
+
+		ApplicationID:    uuid.New(),
+		AppData: 		  util.RandString(rand.Intn(100)),
 	}
 }
 

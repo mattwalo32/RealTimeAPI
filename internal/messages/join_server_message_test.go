@@ -35,6 +35,14 @@ func TestJoinServer_EncodeDecode(t *testing.T) {
 		t.Error("MessageIDs do not match")
 	}
 
+	if msg.ApplicationID != decodedMsg.ApplicationID {
+		t.Error("AppIDs do not match")
+	}
+
+	if msg.AppData != decodedMsg.AppData {
+		t.Error("AppDatas do not match")
+	}
+
 	if msg.PacketNumber != decodedMsg.PacketNumber {
 		t.Error("PacketNumbers do not match")
 	}
