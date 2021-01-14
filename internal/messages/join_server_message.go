@@ -13,6 +13,9 @@ type JoinServerMessage struct {
 	MessageID        uuid.UUID
 	PacketNumber     int
 	ResponseRequired bool
+
+	ApplicationID    uuid.UUID
+	AppData          string
 }
 
 func (msg *JoinServerMessage) Encode() ([]byte, error) {
