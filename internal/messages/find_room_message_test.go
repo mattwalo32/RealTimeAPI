@@ -65,11 +65,7 @@ func TestFindRoom_EncodeDecode(t *testing.T) {
 		t.Error("ShouldStartWhenFull does not match")
 	}
 
-	if msg.MinPlayers != decodedMsg.MinPlayers {
-		t.Error("MinPlayers does not match")
-	}
-
-	if msg.MaxPlayers != decodedMsg.MaxPlayers {
-		t.Error("MaxPlayers does not match")
+	if msg.RoomType != decodedMsg.RoomType {
+		t.Error("Room Type does not match")
 	}
 }

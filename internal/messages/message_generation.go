@@ -17,8 +17,7 @@ func RandRoomMessage() *FindRoomMessage {
 		UserID:              uuid.New(),
 		ClientID:            uuid.New(),
 		ShouldStartWhenFull: util.RandBool(),
-		MinPlayers:          rand.Int(),
-		MaxPlayers:          rand.Int(),
+		RoomType:            rand.Int(),
 	}
 }
 

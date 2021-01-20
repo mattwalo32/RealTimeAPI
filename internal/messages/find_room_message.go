@@ -17,8 +17,7 @@ type FindRoomMessage struct {
 	UserID              uuid.UUID
 	ClientID            uuid.UUID
 	ShouldStartWhenFull bool
-	MinPlayers          int
-	MaxPlayers          int
+	RoomType            int
 }
 
 func (msg *FindRoomMessage) Encode() ([]byte, error) {
