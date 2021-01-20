@@ -88,7 +88,7 @@ func TestSendRoutableMessages_Unreliable(t *testing.T) {
  * Test sending a game message reliably with no response. The message will
  * be resent multiple times until we reach the retry limit.
  */
-func TestSendAssocialbeMessages_Reliable_NoResponse(t *testing.T) {
+func TestSendRoutableMessages_Reliable_NoResponse(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	numTestMessages := 20
