@@ -9,7 +9,7 @@ type messageQueueHandler struct {
 	messages []messages.Message
 }
 
-func newMockRoom() *Room {
+func newMockRoomConfig() RoomConfig {
 	evtHandler := &messageQueueHandler{}
 
 	config := RoomConfig{
@@ -19,7 +19,7 @@ func newMockRoom() *Room {
 		InitialCapacity:              10,
 	}
 
-	return NewRoom(config)
+	return config
 }
 
 func (queue *messageQueueHandler) OnClientConnected(client Client) {}

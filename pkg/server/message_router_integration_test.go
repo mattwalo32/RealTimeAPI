@@ -22,6 +22,14 @@ func createMessageRouter(address string) *MessageRouter {
 	return NewMessageRouter(config)
 }
 
+func createMessageRouterWithMockRoom(address string) (*MessageRouter, *Room) {
+	router := createMessageRouter(address)
+	roomConfig := newMockRoomConfig()
+	mockRoom := newRoom(roomConfig)
+	router.rooms[mockRoom.ID] = mockRoom
+	return router, mockRoom
+}
+
 /**
  * Test sending a game-related message unreliably
  */
@@ -30,10 +38,7 @@ func TestSendRoutableMessages_Unreliable(t *testing.T) {
 	clientAAddress := "localhost:9999"
 	clientBAddress := "localhost:9998"
 	routerA := createMessageRouter(clientAAddress)
-	routerB := createMessageRouter(clientBAddress)
-
-	listeningRoom := newMockRoom()
-	routerB.RegisterRoom(listeningRoom)
+	routerB, listeningRoom := createMessageRouterWithMockRoom(clientBAddress)
 
 	clientAUDPAddr, _ := net.ResolveUDPAddr("udp4", clientAAddress)
 	clientBUDPAddr, _ := net.ResolveUDPAddr("udp4", clientBAddress)

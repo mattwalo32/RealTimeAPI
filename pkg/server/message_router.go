@@ -22,6 +22,9 @@ type MessageRouter struct {
 	// Maps room ID to room struct
 	rooms map[uuid.UUID]*Room
 
+	// Maps room type to configuration
+	roomConfigs map[int]*RoomConfig
+
 	// Maps messageID to outstanding message retry event IDs
 	messageRetryEventIDs map[uuid.UUID]uuid.UUID
 
@@ -49,7 +52,7 @@ type Client struct {
 	ID                uuid.UUID
 	RoomID            uuid.UUID
 	AppData           string
-	lastContactTimeMs uint64
+	lastContactTimeMs int64
 }
 
 type MessageRouterConfig struct {
@@ -83,6 +86,7 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 		doneChan:             make(chan bool),
 		clients:              make(map[uuid.UUID]*Client),
 		rooms:                make(map[uuid.UUID]*Room),
+		roomConfigs:          make(map[int]*RoomConfig),
 		messageRetryEventIDs: make(map[uuid.UUID]uuid.UUID),
 		timer:                timer.NewTimer(),
 		config:               &config,
@@ -96,13 +100,22 @@ func NewMessageRouter(config MessageRouterConfig) *MessageRouter {
 	return router
 }
 
-func (router *MessageRouter) RegisterRoom(room *Room) {
-	if room == nil {
-		log.Warn("Attempted to register nil room")
+/**
+  * Registers a room config wth the message router. This should be called as early as possible in the server's startup.
+  * When a "FIND_ROOM" message searching for a room of this type is received, a new room will be created off this config if needed.
+  * @param config: The room configuration from which all rooms of this type are made
+  * @param roomType: A user-defined ID for this type of room. 
+  */
+func (router *MessageRouter) RegisterRoomConfiguration(roomConfig RoomConfig, roomType int) {
+	_,isIDTaken := router.roomConfigs[roomType]
+	if isIDTaken {
+		log.WithFields(log.Fields{
+			"RoomType": roomType,
+		}).Error("Attempted to register room config with an existing room type. All room configs must have a unique room type! Room config will not be registered.")
 		return
 	}
 
-	router.rooms[room.ID] = room
+	router.roomConfigs[roomType] = &roomConfig
 }
 
 func (router *MessageRouter) decodeMessages() {

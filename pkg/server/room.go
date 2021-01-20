@@ -44,7 +44,7 @@ type RoomConfig struct {
 	InitialCapacity int
 }
 
-func NewRoom(config RoomConfig) *Room {
+func newRoom(config RoomConfig) *Room {
 	room := &Room{
 		config:     config,
 		isRoomOpen: true,
