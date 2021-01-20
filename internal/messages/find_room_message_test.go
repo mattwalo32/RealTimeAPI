@@ -2,6 +2,7 @@ package messages
 
 import (
 	"testing"
+	"reflect"
 )
 
 func TestFindRoom_Type(t *testing.T) {
@@ -65,7 +66,7 @@ func TestFindRoom_EncodeDecode(t *testing.T) {
 		t.Error("ShouldStartWhenFull does not match")
 	}
 
-	if msg.RoomType != decodedMsg.RoomType {
-		t.Error("Room Type does not match")
+	if !reflect.DeepEqual(msg.RoomTypes, decodedMsg.RoomTypes) {
+		t.Error("Room Types do not match")
 	}
 }

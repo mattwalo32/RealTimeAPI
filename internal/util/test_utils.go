@@ -28,3 +28,12 @@ func RandString(len int) string {
 func RandBool() bool {
 	return rand.Intn(2) == 1
 }
+
+func RandIntSlice(maxLength int) []int {
+	ints := make([]int, maxLength)
+	for i := 0; i < maxLength; i++ {
+		ints[i] = rand.Int();	
+	}
+
+	return ints
+}
