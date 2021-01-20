@@ -72,6 +72,7 @@ func (router *MessageRouter) routeMessage(msg messages.Message, clientID uuid.UU
 		return
 	}
 
+	client.lastContactTimeMs := util.CurrentTimestampMs()
 	roomID := client.RoomID
 	room, doesRoomExist := router.rooms[roomID]
 	if !doesRoomExist {
@@ -81,5 +82,6 @@ func (router *MessageRouter) routeMessage(msg messages.Message, clientID uuid.UU
 		return
 	}
 
+	// TODO: Check if message is verbose
 	room.config.EventHandler.OnMessageRecieved(msg)
 }
